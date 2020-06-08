@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 
 module.exports = {
   name: "apod",
-  dscription: "Shows the Astronomy Picture of the Day featured by the NASA-API",
+  description: "Shows the Astronomy Picture of the Day featured by the NASA-API",
   cooldown: 10,
   usage: "",
   execute(message, args) {
