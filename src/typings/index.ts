@@ -24,3 +24,5 @@ export interface CommandsInterface {
   ping: Command
   test: Command
 }
+
+export type PossibleCommands = 'test' | 'ping'
