@@ -1,4 +1,4 @@
-import { Message } from 'discord.js'
+import { Message, ActivityType } from 'discord.js'
 
 export interface BotInterface {
   start: () => void
@@ -6,7 +6,7 @@ export interface BotInterface {
 
 export interface BotConfig {
   activity: string
-  activityType: 'PLAYING' | 'STREAMING' | 'LISTENING' | 'WATCHING' | 'CUSTOM_STATUS' | 'COMPETING'
+  activityType: ActivityType
 }
 
 export interface Command {
@@ -18,4 +18,9 @@ export interface Command {
   readonly guildOnly: boolean
   readonly aliases: string[]
   execute: (message: Message, args: any[]) => void
+}
+
+export interface CommandsInterface {
+  ping: Command
+  test: Command
 }
