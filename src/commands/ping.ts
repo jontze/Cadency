@@ -1,4 +1,4 @@
-import { Command } from '../types'
+import { Command } from '../typings'
 
 const Ping: Command = {
   name: 'ping',
