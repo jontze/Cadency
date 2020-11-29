@@ -4,7 +4,7 @@ import { BotInterface as BotI, BotConfig, Commands, Command } from '../typings'
 import commands from '../commands'
 
 export default class DiscordBot implements BotI {
-  private readonly token: string = ''
+  private readonly token: string
   private readonly prefix: string
   private readonly client: Client
   private readonly config: BotConfig
