@@ -10,7 +10,7 @@ const Test: Command = {
   aliases: [],
   execute (message, args) {
     if (args[0] !== undefined) {
-      return message.channel.send('Testing...works!')
+      message.channel.send('Testing...works!').catch((err) => console.log(err))
     }
   }
 }
