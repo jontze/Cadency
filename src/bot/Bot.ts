@@ -1,6 +1,6 @@
 import { Client, Collection, Message } from 'discord.js'
 
-import { BotInterface as BotI, BotConfig, CommandsInterface, PossibleCommands, Command } from '../typings'
+import { BotInterface as BotI, BotConfig, Commands, Command } from '../typings'
 import commands from '../commands'
 
 export default class DiscordBot implements BotI {
@@ -8,7 +8,7 @@ export default class DiscordBot implements BotI {
   private readonly prefix: string
   private readonly client: Client
   private readonly config: BotConfig
-  private readonly commands: CommandsInterface
+  private readonly commands: Commands
   private readonly cooldowns: Collection<string, Collection<string, number>>
 
   constructor (token: string, prefix: string = '/', config: BotConfig = { activity: 'with fire', activityType: 'PLAYING' }) {
@@ -51,8 +51,8 @@ export default class DiscordBot implements BotI {
     // Check if Command requires Args
     this.checkArgsRequired(command, args, message)
 
-    // TODO: Fix Cooldown
-    // if (!this.hasCooldown(command, message)) return
+    // Check Command Cooldown of Author
+    if (this.hasCooldown(command, message)) return
 
     // Try to execute the command
     try {
@@ -62,17 +62,26 @@ export default class DiscordBot implements BotI {
     }
   }
 
-  private parseArgsAndCommand (message: Message): [string[], PossibleCommands] {
+  private parseArgsAndCommand (message: Message): [string[], string] {
     const args = message.content.slice(this.prefix.length).split(/ +/).slice(1)
-    const commandName: PossibleCommands = (message.content.slice(this.prefix.length).split(/ +/)[0].toLowerCase() as PossibleCommands)
+    const commandName = message.content.slice(this.prefix.length).split(/ +/)[0].toLowerCase()
     console.log(args)
     console.log(commandName)
     return [args, commandName]
   }
 
-  private getCommand (name: PossibleCommands): Command | undefined {
-    // TODO: Search in Aliases of all Commands
-    const command: Command | undefined = this.commands[name]
+  private getCommand (name: string): Command | undefined {
+    const command: Command | undefined = this.commands[name] ?? this.searchAliases(name)
+    return command
+  }
+
+  private searchAliases (name: string): Command | undefined {
+    const command = undefined
+    for (const key in this.commands) {
+      if (this.commands[key].aliases.includes(name)) {
+        return this.commands[key]
+      }
+    }
     return command
   }
 
@@ -90,26 +99,27 @@ export default class DiscordBot implements BotI {
     }
   }
 
-  // TODO: Fix... buggy AF
   private hasCooldown (command: Command, message: Message): boolean {
-    console.log(this.cooldowns.has(command.name))
+    // Add Command to Collection if never used
     if (!this.cooldowns.has(command.name)) {
       this.cooldowns.set(command.name, new Collection())
     }
     const now = Date.now()
-    const timestamps = this.cooldowns.get(command.name)
     const cooldownAmount = command.cooldown * 1000
-
-    if (timestamps?.has(message.author.id) === true) {
-      const expirationTime = timestamps.get(message.author.id) as number + cooldownAmount
+    // Check if Author already in collection
+    if (this.cooldowns.get(command.name)?.has(message.author.id) === true) {
+      // Check if cooldown passed
+      const expirationTime = (this.cooldowns.get(command.name)?.get(message.author.id) as number) + cooldownAmount
       if (now < expirationTime) {
         const timeLeft = (expirationTime - now) / 1000
         message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`).catch((err) => console.log(err))
         return true
       }
     }
-    timestamps?.set(message.author.id, now)
-    setTimeout(() => timestamps?.delete(message.author.id), cooldownAmount)
+    // Set Timestamp in cooldown collection
+    this.cooldowns.get(command.name)?.set(message.author.id, now)
+    // Delete entry after cooldown
+    setTimeout(() => this.cooldowns.get(command.name)?.delete(message.author.id), cooldownAmount)
     return false
   }
 }
