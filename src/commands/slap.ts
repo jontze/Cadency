@@ -20,8 +20,6 @@ const Slap: Command = {
       message.channel.send(`${botId} slaps ${author.toString()} around a bit with a large trout!`).catch((err) => console.log(err))
       return
     }
-    console.log(author)
-    console.log(args[0])
     message.channel.send(`${message.author.toString()} slaps ${args[0]} around a bit with a large trout!`).catch((err) => console.log(err))
   }
 }
