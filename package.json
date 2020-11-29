@@ -13,8 +13,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.21.0",
+    "delete": "^1.1.0",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
+    "fetch": "^1.1.0",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
