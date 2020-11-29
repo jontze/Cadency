@@ -17,11 +17,9 @@ export interface Command {
   readonly args: boolean
   readonly guildOnly: boolean
   readonly aliases: string[]
-  execute: (message: Message, args: any[]) => void
+  execute: (message: Message, args: string[]) => void
 }
 
 export type Commands = {
   [name in string]: Command
 }
-
-export type PossibleCommands = 'test' | 'ping'
