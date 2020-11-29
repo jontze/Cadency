@@ -20,9 +20,8 @@ export interface Command {
   execute: (message: Message, args: any[]) => void
 }
 
-export interface CommandsInterface {
-  ping: Command
-  test: Command
+export type Commands = {
+  [name in string]: Command
 }
 
 export type PossibleCommands = 'test' | 'ping'
