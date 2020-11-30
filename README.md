@@ -1,6 +1,7 @@
 # Discord Bot
 
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+![Linting](https://github.com/UsingPython/DiscordBot/workflows/Linting/badge.svg?branch=develop&event=push)
 
 - [Requirements](#requirements)
 - [Installation](#installation)
