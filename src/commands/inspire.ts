@@ -4,7 +4,7 @@ import { Command } from '../typings'
 const Inspire: Command = {
   name: 'inspire',
   description: 'Say something really inspiring!',
-  args: true,
+  args: false,
   cooldown: 10,
   usage: '',
   aliases: [],
