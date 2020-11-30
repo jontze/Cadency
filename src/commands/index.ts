@@ -5,6 +5,7 @@ import Slap from './slap'
 import Fib from './fib'
 import Inspire from './inspire'
 import Urban from './urban'
+import Help from './help'
 
 const commands: Commands = {
   [Ping.name]: Ping,
@@ -12,7 +13,8 @@ const commands: Commands = {
   [Slap.name]: Slap,
   [Fib.name]: Fib,
   [Inspire.name]: Inspire,
-  [Urban.name]: Urban
+  [Urban.name]: Urban,
+  [Help.name]: Help
 }
 
 export default commands
