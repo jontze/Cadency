@@ -1,11 +1,16 @@
-FROM node:14-alpine
-
-WORKDIR /usr/src/discordbot
-
+FROM node:14.15-alpine as build
+WORKDIR /usr/discordbot
 COPY package*.json ./
-
-RUN npm install
-
+COPY tsconfig.json .
+RUN npm install && mkdir src
 COPY . .
+RUN npm run build
 
-CMD [ "npm", "start" ]
+FROM node:14.15-alpine as production
+RUN apk update
+WORKDIR /usr/discordbot
+COPY package*.json ./
+RUN npm install ci --only=production
+COPY --from=build /usr/discordbot/dist .
+USER node
+CMD ["node", "index.js"]

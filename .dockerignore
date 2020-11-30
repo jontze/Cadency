@@ -1,2 +1,10 @@
 node_modules
 npm-debug.log
+.vscode/
+coverage/
+dist/
+.eslintrc.js
+.gitignore
+README.md
+.env
+.env.example
