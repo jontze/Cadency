@@ -10,6 +10,7 @@
 ## Requirements
 
 - min. NodeJS v14.15
+- a valid Discord Bot-Token
 - [ffmpeg](https://www.ffmpeg.org)
 
 ## Installation
@@ -20,9 +21,9 @@
   - Install node_modules: `npm i --save`
   - Build: `npm run build`
   - Create an .env file based on the .env.example with an valid BOT_TOKEN
-  - Execute index.js in dist-Folder: `node dist/index.js`
+  - Execute the index.js in dist-Folder: `node dist/index.js`
 
 ## Contributing
 
  You want to add an command?
- Just create a new file in the commands directory, look at the other commands for the basic layout, write your code and don't forgett to import your new file in the index.js of the commands directory.
+ Just create a new file in the commands directory, look at the other commands for the basic layout, write your code and don't forgett to import your new file in the index.ts of the commands directory.
