@@ -1,4 +1,4 @@
-FROM node:14.15-alpine as build
+FROM node:14.15 as build
 WORKDIR /usr/discordbot
 COPY package*.json ./
 COPY tsconfig.json .
