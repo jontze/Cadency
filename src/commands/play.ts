@@ -43,6 +43,7 @@ const Play: Command = {
       } else {
         voiceChannelUser?.join().then((connection) => {
           connection.play(ytdl(videoUrl))
+          message.channel.send(`:white_check_mark: **Joined** ${voiceChannelUser.name} by order of ${message.author.username} \n**Playing** :notes: \`${videoUrl}\``).catch(err => console.log(err))
         }).catch(err => console.log(err))
       }
     }
