@@ -10,6 +10,7 @@
 ## Requirements
 
 - min. NodeJS v14.15
+- [ffmpeg](https://www.ffmpeg.org)
 
 ## Installation
 
