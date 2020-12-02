@@ -1,7 +1,7 @@
-import ytdl from 'ytdl-core'
+import ytdl, { MoreVideoDetails } from 'ytdl-core'
 import { Message } from 'discord.js'
 
-import { Command } from '../typings'
+import { Command, QueueSong } from '../typings'
 
 function validateVoiceChannel (message: Message): boolean {
   if (message.member?.voice.channel == null) {
@@ -18,11 +18,16 @@ function validateVoiceChannel (message: Message): boolean {
   }
 }
 
-function parseUserInput (args: string[]): string {
+async function requestSongInfo (message: Message, args: string[]): Promise<MoreVideoDetails | undefined> {
   if (args.length === 1 && ytdl.validateURL(args[0])) {
-    return args[0]
+    try {
+      const videoInfo = await ytdl.getInfo(args[0])
+      return videoInfo.videoDetails
+    } catch (e) {
+      console.log(e)
+    }
   } else {
-    return ''
+    return undefined
   }
 }
 
@@ -36,16 +41,24 @@ const Play: Command = {
   guildOnly: true,
   execute (message, args) {
     const voiceChannelUser = message.member?.voice.channel
+
     if (validateVoiceChannel(message)) {
-      const videoUrl = parseUserInput(args)
-      if (videoUrl === '') {
-        message.channel.send('Invalid Youtube-Link!').catch(err => console.log(err))
-      } else {
-        voiceChannelUser?.join().then((connection) => {
-          connection.play(ytdl(videoUrl))
-          message.channel.send(`:white_check_mark: **Joined** ${voiceChannelUser.name} by order of ${message.author.username} \n**Playing** :notes: \`${videoUrl}\``).catch(err => console.log(err))
-        }).catch(err => console.log(err))
-      }
+      requestSongInfo(message, args).then((videoInfo) => {
+        if (videoInfo === undefined) {
+          message.channel.send('Invalid Youtube-Link!').catch(err => console.log(err))
+        } else {
+          const serverQueue: QueueSong = {
+            textChannel: message.channel,
+            voiceChannel: voiceChannelUser,
+            connection: null,
+            songs: [],
+            volume: 5,
+            playing: false
+          }
+          serverQueue.songs.push(videoInfo)
+          message.client.emit('addSong', serverQueue, voiceChannelUser?.guild.id, message)
+        }
+      }).catch(err => console.log(err))
     }
   }
 }
