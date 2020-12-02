@@ -1,4 +1,5 @@
-import { Message, ActivityType } from 'discord.js'
+import { Message, ActivityType, TextChannel, DMChannel, NewsChannel, VoiceChannel, VoiceConnection } from 'discord.js'
+import { MoreVideoDetails } from 'ytdl-core'
 
 export interface BotInterface {
   start: () => void
@@ -36,4 +37,13 @@ export interface UrbanDictionary {
   written_on: Date
   example: string
   thumbs_down: number
+}
+
+export interface QueueSong {
+  textChannel: TextChannel | DMChannel | NewsChannel
+  voiceChannel: VoiceChannel | null | undefined
+  connection: VoiceConnection | null
+  songs: MoreVideoDetails[]
+  volume: number
+  playing: boolean
 }
