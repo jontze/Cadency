@@ -1,6 +1,7 @@
-import { Client, Collection, Message } from 'discord.js'
+import { Collection, Message, Client } from 'discord.js'
+import ytdl from 'ytdl-core'
 
-import { BotInterface as BotI, BotConfig, Commands, Command } from '../typings'
+import { BotInterface as BotI, BotConfig, Commands, Command, QueueSong } from '../typings'
 import commands from '../commands'
 
 export default class DiscordBot implements BotI {
@@ -10,6 +11,7 @@ export default class DiscordBot implements BotI {
   private readonly config: BotConfig
   private readonly commands: Commands
   private readonly cooldowns: Collection<string, Collection<string, number>>
+  private readonly songList: Collection<string, QueueSong>
 
   constructor (token: string, prefix: string = '/', config: BotConfig = { activity: 'with fire', activityType: 'PLAYING' }) {
     this.token = token
@@ -18,6 +20,7 @@ export default class DiscordBot implements BotI {
     this.commands = commands
     this.client = new Client()
     this.cooldowns = new Collection()
+    this.songList = new Collection()
   }
 
   public start (): void {
@@ -25,13 +28,18 @@ export default class DiscordBot implements BotI {
       console.log('Start awesome things...')
     }).catch((err) => console.log(err))
 
+    // Listen until startup finished
     this.client.on('ready', () => {
       this.client.user?.setActivity(this.config.activity, {
         type: this.config.activityType
       }).catch((err) => console.log(err))
     })
 
+    // Listen to incoming messages
     this.client.on('message', this.messageHandler.bind(this))
+
+    // Listen to incoming songs
+    this.client.on('addSong', this.songHandler.bind(this))
   }
 
   private messageHandler (message: Message): void {
@@ -121,5 +129,41 @@ export default class DiscordBot implements BotI {
     // Delete entry after cooldown
     setTimeout(() => this.cooldowns.get(command.name)?.delete(message.author.id), cooldownAmount)
     return false
+  }
+
+  private songHandler (song: QueueSong, guildId: string, message: Message): void {
+    this.addSong(song, guildId, message)
+    if (this.songList.get(guildId)?.playing === false) {
+      this.playGuildPlaylist(guildId)
+    }
+  }
+
+  private addSong (song: QueueSong, guildId: string, message: Message): void {
+    if (this.songList.get(guildId) === undefined) {
+      this.songList.set(guildId, song)
+      message.channel.send(`:white_check_mark: **Joined** ${song.voiceChannel === null || song.voiceChannel === undefined ? 'Unknown-Channel' : song.voiceChannel.name} \n**Playing** :notes: \`${song.songs[0].video_url}\` \n:newspaper: \`${song.songs[0].title}\``).catch((err) => console.log(err))
+    } else {
+      const serverSongs = this.songList.get(guildId)
+      serverSongs?.songs.push(song.songs[0])
+      message.channel.send(`:white_check_mark: Added song to the queue \n**Playing** :notes: \`${song.songs[0].video_url}\` \n:newspaper: \`${song.songs[0].title}\``).catch((err) => console.log(err))
+    }
+  }
+
+  private playGuildPlaylist (guildId: string): void {
+    const guildData = this.songList.get(guildId)
+    if (guildData === undefined) return
+    guildData?.voiceChannel?.join().then((connection) => {
+      guildData.connection = connection
+      guildData.playing = true
+      connection.play(ytdl(guildData.songs[0].video_url))
+        .on('finish', () => {
+          guildData.songs.shift()
+          if (guildData.songs.length === 0) {
+            this.songList.delete(guildId)
+            guildData.voiceChannel?.leave()
+          }
+          this.playGuildPlaylist(guildId)
+        })
+    }).catch((err) => console.log(err))
   }
 }
