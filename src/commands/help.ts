@@ -22,7 +22,8 @@ const Help: Command = {
         position = position + 1
       }
     }
-    message.channel.send(embed).catch((err) => console.log(err))
+    message.channel.send(`I send you a DM with a list of my commands, @${message.author.toString()}`).catch((err) => console.error(err))
+    message.author.send(embed).catch((err) => console.error(err))
   }
 }
 
