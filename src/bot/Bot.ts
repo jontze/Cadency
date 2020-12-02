@@ -1,4 +1,4 @@
-import { Collection, Message, Client } from 'discord.js'
+import { Collection, Message, Client, MessageEmbed } from 'discord.js'
 import ytdl from 'ytdl-core'
 
 import { BotInterface as BotI, BotConfig, Commands, Command, QueueSong } from '../typings'
@@ -40,6 +40,21 @@ export default class DiscordBot implements BotI {
 
     // Listen to incoming songs
     this.client.on('addSong', this.songHandler.bind(this))
+
+    // Listen to pause-event
+    this.client.on('pauseSong', this.pauseSongHandler.bind(this))
+
+    // Listen to resume-song-event
+    this.client.on('resumeSong', this.resumeSongHandler.bind(this))
+
+    // Listen to skip-song-event
+    this.client.on('skipSong', this.skipSongHandler.bind(this))
+
+    // Listen to show-playlist-event
+    this.client.on('showPlaylist', this.showPlaylistHandler.bind(this))
+
+    // Listen to purge-playlist-event
+    this.client.on('purgePlaylist', this.purgePlaylistHandler.bind(this))
   }
 
   private messageHandler (message: Message): void {
@@ -165,5 +180,67 @@ export default class DiscordBot implements BotI {
           this.playGuildPlaylist(guildId)
         })
     }).catch((err) => console.log(err))
+  }
+
+  private pauseSongHandler (guildId: string, message: Message): void {
+    const guildData = this.songList.get(guildId)
+    if (guildData?.connection != null && guildData?.playing) {
+      guildData.connection.dispatcher.pause()
+      guildData.playing = false
+    } else {
+      message.channel.send('I can\'t pause...no music is playing.').catch((err) => console.log(err))
+    }
+  }
+
+  private resumeSongHandler (guildId: string, message: Message): void {
+    const guildData = this.songList.get(guildId)
+    if (guildData?.connection != null && !guildData?.playing) {
+      guildData.connection.dispatcher.resume()
+      guildData.playing = true
+    } else if (guildData?.connection != null && guildData?.playing) {
+      message.channel.send('The music is already playing...').catch((err) => console.log(err))
+    } else {
+      message.channel.send('I can\'t resume...no music is in the queue.').catch((err) => console.log(err))
+    }
+  }
+
+  private skipSongHandler (guildId: string, message: Message): void {
+    const guildData = this.songList.get(guildId)
+    if (guildData?.connection != null && guildData.songs.length > 0) {
+      guildData.connection.dispatcher.end()
+    } else {
+      message.channel.send('I can\'t skip...no music is in the queue.').catch((err) => console.log(err))
+    }
+  }
+
+  private showPlaylistHandler (guildId: string, message: Message): void {
+    const guildData = this.songList.get(guildId)
+    if (guildData?.connection != null && guildData.songs.length > 0) {
+      // send EmbedMessage with Songs
+      const embed = new MessageEmbed()
+      embed
+        .setColor('#008000')
+        .setTitle('Playlist')
+      for (let i = 0; i < guildData.songs.length; i++) {
+        const songElement = guildData.songs[i]
+        const position = i + 1
+        embed.addField(`${position}. :newspaper: \`${songElement.title}\``, `:notes: \`${songElement.video_url}\``)
+      }
+      message.channel.send(embed).catch((err) => console.log(err))
+    } else {
+      message.channel.send(':no_entry_sign: **No songs in the queue**').catch((err) => console.log(err))
+    }
+  }
+
+  private purgePlaylistHandler (guildId: string, message: Message): void {
+    const guildData = this.songList.get(guildId)
+    if (guildData?.connection != null && guildData.songs.length > 0) {
+      // purge playlist and end dispatcher
+      guildData.songs.length = 0
+      guildData.connection.dispatcher.end()
+      message.channel.send(':white_check_mark: :wastebasket: **Successfully cleared the playlist**').catch((err) => console.log(err))
+    } else {
+      message.channel.send(':no_entry_sign: **The playlist is already empty**').catch((err) => console.log(err))
+    }
   }
 }
