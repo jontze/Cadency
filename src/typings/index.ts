@@ -1,4 +1,4 @@
-import { Message, ActivityType, TextChannel, DMChannel, NewsChannel, VoiceChannel, VoiceConnection } from 'discord.js'
+import { Message, ActivityType, TextChannel, DMChannel, NewsChannel, VoiceChannel, VoiceConnection, PresenceData } from 'discord.js'
 import { MoreVideoDetails } from 'ytdl-core'
 
 export interface BotInterface {
@@ -9,6 +9,7 @@ export interface BotConfig {
   prefix: string
   activity: string
   activityType: ActivityType
+  status: PresenceData['status']
 }
 
 export interface Command {
