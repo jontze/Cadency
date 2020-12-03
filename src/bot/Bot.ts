@@ -179,6 +179,7 @@ export default class DiscordBot implements BotI {
           }
           this.playGuildPlaylist(guildId)
         })
+        .on('error', (err) => logger.error(err))
     }).catch((err) => logger.error(err))
   }
 
