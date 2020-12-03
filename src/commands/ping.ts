@@ -1,4 +1,5 @@
 import { Command } from '../typings'
+import logger from '../logger'
 
 const Ping: Command = {
   name: 'ping',
@@ -10,7 +11,7 @@ const Ping: Command = {
   guildOnly: false,
   execute: (message, args): void => {
     message.channel.send('Pong').catch((err) => {
-      console.log(err)
+      logger.error(err)
     })
   }
 }

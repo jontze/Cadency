@@ -1,5 +1,6 @@
 import { Command, QueueSong } from '../typings'
 import * as music from '../utils/music'
+import logger from '../logger'
 
 const Play: Command = {
   name: 'play',
@@ -15,7 +16,7 @@ const Play: Command = {
     if (music.validateVoiceChannel(message)) {
       music.requestSongInfo(message, args).then((videoInfo) => {
         if (videoInfo === undefined) {
-          message.channel.send('Invalid Youtube-Link!').catch(err => console.log(err))
+          message.channel.send('Invalid Youtube-Link!').catch(err => logger.error(err))
         } else {
           const serverQueue: QueueSong = {
             textChannel: message.channel,
@@ -28,7 +29,7 @@ const Play: Command = {
           serverQueue.songs.push(videoInfo)
           message.client.emit('addSong', serverQueue, voiceChannelUser?.guild.id, message)
         }
-      }).catch(err => console.log(err))
+      }).catch(err => logger.error(err))
     }
   }
 }

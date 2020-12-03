@@ -1,4 +1,5 @@
 import { Command } from '../typings'
+import logger from '../logger'
 
 const Test: Command = {
   name: 'test',
@@ -10,7 +11,7 @@ const Test: Command = {
   aliases: [],
   execute (message, args) {
     if (args[0] !== undefined) {
-      message.channel.send('Testing...works!').catch((err) => console.log(err))
+      message.channel.send('Testing...works!').catch((err) => logger.error(err))
     }
   }
 }

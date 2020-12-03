@@ -3,6 +3,7 @@ import ytdl from 'ytdl-core'
 
 import { BotInterface as BotI, BotConfig, Commands, Command, QueueSong } from '../typings'
 import commands from '../commands'
+import logger from '../logger'
 
 export default class DiscordBot implements BotI {
   private readonly token: string
@@ -25,14 +26,14 @@ export default class DiscordBot implements BotI {
 
   public start (): void {
     this.client.login(this.token).then(() => {
-      console.log('Start awesome things...')
-    }).catch((err) => console.log(err))
+      logger.info('Start awesome things...')
+    }).catch((err) => logger.error(err))
 
     // Listen until startup finished
     this.client.on('ready', () => {
       this.client.user?.setActivity(this.config.activity, {
         type: this.config.activityType
-      }).catch((err) => console.log(err))
+      }).catch((err) => logger.error(err))
     })
 
     // Listen to incoming messages
@@ -81,15 +82,14 @@ export default class DiscordBot implements BotI {
     try {
       command.execute(message, args)
     } catch (e) {
-      message.reply('There was an error trying to execute that command!').catch((err) => console.log(err))
+      message.reply('There was an error trying to execute that command!').catch((err) => logger.error(err))
     }
   }
 
   private parseArgsAndCommand (message: Message): [string[], string] {
     const args = message.content.slice(this.prefix.length).split(/ +/).slice(1)
     const commandName = message.content.slice(this.prefix.length).split(/ +/)[0].toLowerCase()
-    console.log(args)
-    console.log(commandName)
+    logger.info(`Command: ${commandName}, args: ${args.join(' ')}`)
     return [args, commandName]
   }
 
@@ -110,7 +110,7 @@ export default class DiscordBot implements BotI {
 
   private checkGuildOnly (command: Command, message: Message): void {
     if (command.guildOnly && message.channel.type !== 'text') {
-      message.reply('I can\'t execute that command inside DMs!').catch((err) => console.log(err))
+      message.reply('I can\'t execute that command inside DMs!').catch((err) => logger.error(err))
     }
   }
 
@@ -118,7 +118,7 @@ export default class DiscordBot implements BotI {
     if (command.args && args.length === 0) {
       let reply = `You didn't provide any arguments, @${message.author.toString()}!`
       reply += `\nThe proper usage would be: \`${this.prefix}${command.name} ${command.usage}\``
-      message.channel.send(reply).catch((err) => console.log(err))
+      message.channel.send(reply).catch((err) => logger.error(err))
     }
   }
 
@@ -135,7 +135,7 @@ export default class DiscordBot implements BotI {
       const expirationTime = (this.cooldowns.get(command.name)?.get(message.author.id) as number) + cooldownAmount
       if (now < expirationTime) {
         const timeLeft = (expirationTime - now) / 1000
-        message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`).catch((err) => console.log(err))
+        message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`).catch((err) => logger.error(err))
         return true
       }
     }
@@ -156,11 +156,11 @@ export default class DiscordBot implements BotI {
   private addSong (song: QueueSong, guildId: string, message: Message): void {
     if (this.songList.get(guildId) === undefined) {
       this.songList.set(guildId, song)
-      message.channel.send(`:white_check_mark: **Joined** ${song.voiceChannel === null || song.voiceChannel === undefined ? 'Unknown-Channel' : song.voiceChannel.name} \n**Playing** :notes: \`${song.songs[0].video_url}\` \n:newspaper: \`${song.songs[0].title}\``).catch((err) => console.log(err))
+      message.channel.send(`:white_check_mark: **Joined** ${song.voiceChannel === null || song.voiceChannel === undefined ? 'Unknown-Channel' : song.voiceChannel.name} \n**Playing** :notes: \`${song.songs[0].video_url}\` \n:newspaper: \`${song.songs[0].title}\``).catch((err) => logger.error(err))
     } else {
       const serverSongs = this.songList.get(guildId)
       serverSongs?.songs.push(song.songs[0])
-      message.channel.send(`:white_check_mark: Added song to the queue \n**Playing** :notes: \`${song.songs[0].video_url}\` \n:newspaper: \`${song.songs[0].title}\``).catch((err) => console.log(err))
+      message.channel.send(`:white_check_mark: Added song to the queue \n**Playing** :notes: \`${song.songs[0].video_url}\` \n:newspaper: \`${song.songs[0].title}\``).catch((err) => logger.error(err))
     }
   }
 
@@ -179,7 +179,7 @@ export default class DiscordBot implements BotI {
           }
           this.playGuildPlaylist(guildId)
         })
-    }).catch((err) => console.log(err))
+    }).catch((err) => logger.error(err))
   }
 
   private pauseSongHandler (guildId: string, message: Message): void {
@@ -188,7 +188,7 @@ export default class DiscordBot implements BotI {
       guildData.connection.dispatcher.pause()
       guildData.playing = false
     } else {
-      message.channel.send('I can\'t pause...no music is playing.').catch((err) => console.log(err))
+      message.channel.send('I can\'t pause...no music is playing.').catch((err) => logger.error(err))
     }
   }
 
@@ -198,9 +198,9 @@ export default class DiscordBot implements BotI {
       guildData.connection.dispatcher.resume()
       guildData.playing = true
     } else if (guildData?.connection != null && guildData?.playing) {
-      message.channel.send('The music is already playing...').catch((err) => console.log(err))
+      message.channel.send('The music is already playing...').catch((err) => logger.error(err))
     } else {
-      message.channel.send('I can\'t resume...no music is in the queue.').catch((err) => console.log(err))
+      message.channel.send('I can\'t resume...no music is in the queue.').catch((err) => logger.error(err))
     }
   }
 
@@ -209,7 +209,7 @@ export default class DiscordBot implements BotI {
     if (guildData?.connection != null && guildData.songs.length > 0) {
       guildData.connection.dispatcher.end()
     } else {
-      message.channel.send('I can\'t skip...no music is in the queue.').catch((err) => console.log(err))
+      message.channel.send('I can\'t skip...no music is in the queue.').catch((err) => logger.error(err))
     }
   }
 
@@ -226,9 +226,9 @@ export default class DiscordBot implements BotI {
         const position = i + 1
         embed.addField(`${position}. :newspaper: \`${songElement.title}\``, `:notes: \`${songElement.video_url}\``)
       }
-      message.channel.send(embed).catch((err) => console.log(err))
+      message.channel.send(embed).catch((err) => logger.error(err))
     } else {
-      message.channel.send(':no_entry_sign: **No songs in the queue**').catch((err) => console.log(err))
+      message.channel.send(':no_entry_sign: **No songs in the queue**').catch((err) => logger.error(err))
     }
   }
 
@@ -238,9 +238,9 @@ export default class DiscordBot implements BotI {
       // purge playlist and end dispatcher
       guildData.songs.length = 0
       guildData.connection.dispatcher.end()
-      message.channel.send(':white_check_mark: :wastebasket: **Successfully cleared the playlist**').catch((err) => console.log(err))
+      message.channel.send(':white_check_mark: :wastebasket: **Successfully cleared the playlist**').catch((err) => logger.error(err))
     } else {
-      message.channel.send(':no_entry_sign: **The playlist is already empty**').catch((err) => console.log(err))
+      message.channel.send(':no_entry_sign: **The playlist is already empty**').catch((err) => logger.error(err))
     }
   }
 }

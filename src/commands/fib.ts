@@ -1,4 +1,5 @@
 import { Command } from '../typings'
+import logger from '../logger'
 
 function fib (n: number): number {
   const phi = (1 + Math.sqrt(5)) / 2
@@ -17,9 +18,9 @@ const Fib: Command = {
   execute (message, args) {
     const inputNumber = parseFloat(args[0])
     if (!isNaN(inputNumber)) {
-      message.channel.send(fib(inputNumber)).catch((err) => console.log(err))
+      message.channel.send(fib(inputNumber)).catch((err) => logger.error(err))
     } else {
-      message.channel.send(`Is \`${args[0]}\` really a valid number?`).catch((err) => console.log(err))
+      message.channel.send(`Is \`${args[0]}\` really a valid number?`).catch((err) => logger.error(err))
     }
   }
 }
