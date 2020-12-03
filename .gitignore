@@ -1,2 +1,7 @@
 .env
 node_modules/
+dist/
+ffmpeg.exe
+ffplay.exe
+ffprobe.exe
+bot.log
