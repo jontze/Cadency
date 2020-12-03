@@ -1,6 +1,7 @@
 # Discord Bot
 
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+![CodeQL](https://github.com/UsingPython/DiscordBot/workflows/CodeQL/badge.svg?branch=master&event=push)
 ![Linting](https://github.com/UsingPython/DiscordBot/workflows/Linting/badge.svg?branch=develop&event=push)
 
 - [Discord Bot](#discord-bot)
