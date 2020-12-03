@@ -7,16 +7,14 @@ import logger from '../logger'
 
 export default class DiscordBot implements BotI {
   private readonly token: string
-  private readonly prefix: string
   private readonly client: Client
   private readonly config: BotConfig
   private readonly commands: Commands
   private readonly cooldowns: Collection<string, Collection<string, number>>
   private readonly songList: Collection<string, QueueSong>
 
-  constructor (token: string, prefix: string = '/', config: BotConfig = { activity: 'with fire', activityType: 'PLAYING' }) {
+  constructor (token: string, config: BotConfig = { prefix: '/', activity: 'Listen to some music', activityType: 'CUSTOM_STATUS' }) {
     this.token = token
-    this.prefix = prefix
     this.config = config
     this.commands = commands
     this.client = new Client()
@@ -60,7 +58,7 @@ export default class DiscordBot implements BotI {
 
   private messageHandler (message: Message): void {
     // Ignore messages without prefix or sended by bots
-    if (!message.content.startsWith(this.prefix) || message.author.bot) return
+    if (!message.content.startsWith(this.config.prefix) || message.author.bot) return
 
     // Parse Args and Command-Name
     const [args, commandName] = this.parseArgsAndCommand(message)
@@ -87,8 +85,8 @@ export default class DiscordBot implements BotI {
   }
 
   private parseArgsAndCommand (message: Message): [string[], string] {
-    const args = message.content.slice(this.prefix.length).split(/ +/).slice(1)
-    const commandName = message.content.slice(this.prefix.length).split(/ +/)[0].toLowerCase()
+    const args = message.content.slice(this.config.prefix.length).split(/ +/).slice(1)
+    const commandName = message.content.slice(this.config.prefix.length).split(/ +/)[0].toLowerCase()
     logger.info(`Command: ${commandName}, args: ${args.join(' ')}`)
     return [args, commandName]
   }
@@ -117,7 +115,7 @@ export default class DiscordBot implements BotI {
   private checkArgsRequired (command: Command, args: string[], message: Message): void {
     if (command.args && args.length === 0) {
       let reply = `You didn't provide any arguments, @${message.author.toString()}!`
-      reply += `\nThe proper usage would be: \`${this.prefix}${command.name} ${command.usage}\``
+      reply += `\nThe proper usage would be: \`${this.config.prefix}${command.name} ${command.usage}\``
       message.channel.send(reply).catch((err) => logger.error(err))
     }
   }

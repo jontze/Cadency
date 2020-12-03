@@ -6,6 +6,7 @@ export interface BotInterface {
 }
 
 export interface BotConfig {
+  prefix: string
   activity: string
   activityType: ActivityType
 }
