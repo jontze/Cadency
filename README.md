@@ -3,6 +3,7 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 ![CodeQL](https://github.com/UsingPython/DiscordBot/workflows/CodeQL/badge.svg?branch=master&event=push)
 ![Linting](https://github.com/UsingPython/DiscordBot/workflows/Linting/badge.svg?branch=develop&event=push)
+[![GitHub license](https://img.shields.io/github/license/UsingPython/DiscordBot)](https://github.com/UsingPython/DiscordBot/blob/master/LICENSE)
 
 - [Discord Bot](#discord-bot)
   - [Requirements](#requirements)
