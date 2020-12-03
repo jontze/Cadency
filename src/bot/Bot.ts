@@ -8,18 +8,30 @@ import logger from '../logger'
 export default class DiscordBot implements BotI {
   private readonly token: string
   private readonly client: Client
-  private readonly config: BotConfig
   private readonly commands: Commands
   private readonly cooldowns: Collection<string, Collection<string, number>>
   private readonly songList: Collection<string, QueueSong>
+  private readonly config: BotConfig = {
+    prefix: '/',
+    activity: 'Listen to some music',
+    activityType: 'CUSTOM_STATUS',
+    status: 'online'
+  }
 
-  constructor (token: string, config: BotConfig = { prefix: '/', activity: 'Listen to some music', activityType: 'CUSTOM_STATUS', status: 'idle' }) {
+  constructor (token: string, config?: BotConfig) {
     this.token = token
-    this.config = config
+    if (config !== undefined) this.setConfig(config)
     this.commands = commands
     this.client = new Client()
     this.cooldowns = new Collection()
     this.songList = new Collection()
+  }
+
+  private setConfig (config: BotConfig): void {
+    this.config.prefix = config.prefix ?? this.config.prefix
+    this.config.activity = config.activity ?? this.config.activity
+    this.config.activityType = config.activityType ?? this.config.activityType
+    this.config.status = config.status ?? this.config.status
   }
 
   public start (): void {
