@@ -13,7 +13,7 @@ export default class DiscordBot implements BotI {
   private readonly cooldowns: Collection<string, Collection<string, number>>
   private readonly songList: Collection<string, QueueSong>
 
-  constructor (token: string, config: BotConfig = { prefix: '/', activity: 'Listen to some music', activityType: 'CUSTOM_STATUS' }) {
+  constructor (token: string, config: BotConfig = { prefix: '/', activity: 'Listen to some music', activityType: 'CUSTOM_STATUS', status: 'idle' }) {
     this.token = token
     this.config = config
     this.commands = commands
@@ -29,8 +29,12 @@ export default class DiscordBot implements BotI {
 
     // Listen until startup finished
     this.client.on('ready', () => {
-      this.client.user?.setActivity(this.config.activity, {
-        type: this.config.activityType
+      this.client.user?.setPresence({
+        activity: {
+          name: this.config.activity,
+          type: this.config.activityType
+        },
+        status: this.config.status
       }).catch((err) => logger.error(err))
     })
 
