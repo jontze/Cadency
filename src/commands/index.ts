@@ -13,6 +13,7 @@ import Skip from './skip'
 import Show from './show'
 import Purge from './purge'
 import Search from './search'
+import Now from './now'
 
 const commands: Commands = {
   [Ping.name]: Ping,
@@ -28,7 +29,8 @@ const commands: Commands = {
   [Skip.name]: Skip,
   [Show.name]: Show,
   [Purge.name]: Purge,
-  [Search.name]: Search
+  [Search.name]: Search,
+  [Now.name]: Now
 }
 
 export default commands
