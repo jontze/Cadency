@@ -42,6 +42,9 @@ export default class DiscordBot extends Base implements BotI {
 
     // Listen to purge-playlist-event
     this.client.on('purgePlaylist', this.purgePlaylistHandler.bind(this))
+
+    // Listen to currentSong-event
+    this.client.on('currentSong', this.showCurrentSong.bind(this))
   }
 
   private messageHandler (message: Message): void {
@@ -168,6 +171,15 @@ export default class DiscordBot extends Base implements BotI {
       message.channel.send(':white_check_mark: :wastebasket: **Successfully cleared the playlist**').catch((err) => logger.error(err))
     } else {
       message.channel.send(':no_entry_sign: **The playlist is already empty**').catch((err) => logger.error(err))
+    }
+  }
+
+  private showCurrentSong (guildId: string, message: Message): void {
+    const guildData = this.songList.get(guildId)
+    if (guildData?.songs.length === 0 || guildData === undefined) {
+      message.channel.send(':x: No song is playing...').catch((err) => logger.error(err))
+    } else {
+      message.channel.send(`:notes: Playing \`${guildData?.songs[0].title ?? '_unknown_'}\``).catch((err) => logger.error(err))
     }
   }
 }
