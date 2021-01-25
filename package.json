@@ -31,7 +31,7 @@
     "ytsr": "^3.0.0"
   },
   "devDependencies": {
-    "@types/node": "^14.14.14",
+    "@types/node": "^14.14.22",
     "@typescript-eslint/eslint-plugin": "^4.10.0",
     "eslint": "^7.16.0",
     "eslint-config-standard-with-typescript": "^19.0.1",
