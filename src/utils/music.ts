@@ -46,8 +46,7 @@ export async function requestSongInfo(
       const searchResults = await ytsr(args.join(" "), { limit: 50 });
       let videoUrl: string = "";
       // Loop over the results and get the URL of the first video
-      for (let i = 0; i < searchResults.items.length; i++) {
-        const searchElement = searchResults.items[i];
+      for (const searchElement of searchResults.items) {
         if (videoUrl !== "") break;
         if (searchElement.type === "video") {
           videoUrl = searchElement.url;
@@ -74,8 +73,7 @@ export async function searchQuery(
   try {
     const searchResults = await ytsr(args.join(" "), { limit: 100 });
     const top10VideoInfo: Video[] = [];
-    for (let i = 0; i < searchResults.items.length; i++) {
-      const searchElement = searchResults.items[i];
+    for (const searchElement of searchResults.items) {
       if (top10VideoInfo.length === 10) break;
       if (searchElement.type === "video") {
         top10VideoInfo.push(searchElement);

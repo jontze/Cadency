@@ -20,7 +20,7 @@ const Inspire: Command = {
         logger.error(err);
         message.channel
           .send("Shit just hits the fan...")
-          .catch((err) => logger.error(err));
+          .catch((e) => logger.error(e));
       });
   },
 };
