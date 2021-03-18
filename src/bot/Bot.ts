@@ -1,7 +1,7 @@
 import { Message, MessageEmbed } from "discord.js";
 import ytdl from "ytdl-core";
 
-import Base from "./Base";
+import Base from "./BaseBot";
 import { BotInterface as BotI, QueueSong } from "../typings";
 import logger from "../logger";
 
