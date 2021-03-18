@@ -4,6 +4,10 @@
 ![Linting](https://github.com/UsingPython/DiscordBot/workflows/Linting/badge.svg?branch=develop&event=push)
 ![GitHub last commit (branch)](https://img.shields.io/github/last-commit/UsingPython/DiscordBot/master)
 [![GitHub license](https://img.shields.io/github/license/UsingPython/DiscordBot)](https://github.com/UsingPython/DiscordBot/blob/master/LICENSE)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=UsingPython_DiscordBot&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=UsingPython_DiscordBot)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=UsingPython_DiscordBot&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=UsingPython_DiscordBot)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=UsingPython_DiscordBot&metric=security_rating)](https://sonarcloud.io/dashboard?id=UsingPython_DiscordBot)
+
 
 - [Discord Bot](#discord-bot)
   - [Requirements](#requirements)
