@@ -24,9 +24,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 14.x
-      - name: Install Pacakges 
+      - name: Install Pacakges
         run: npm ci
-      - name: Build Step 
+      - name: Build Step
         run: npm run build
   sonarcloud:
     needs: lint
