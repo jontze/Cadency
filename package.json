@@ -1,6 +1,6 @@
 {
   "name": "discord-bot",
-  "version": "1.2.2",
+  "version": "0.0.0-development",
   "description": "A simple Discord-Music-Bot, written with discord.js and TypeScript",
   "homepage": "https://github.com/UsingPython/DiscordBot",
   "bugs": "https://github.com/UsingPython/DiscordBot/issues",
@@ -10,7 +10,8 @@
     "lint": "ts-standard",
     "format": "ts-standard --fix",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "semantic-release": "semantic-release"
   },
   "author": "UsingPython",
   "repository": {
@@ -31,6 +32,8 @@
     "ytsr": "^3.2.3"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^5.0.1",
+    "@semantic-release/git": "^9.0.0",
     "@types/node": "^14.14.35",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "eslint": "^7.22.0",
@@ -38,6 +41,7 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
+    "semantic-release": "^17.4.2",
     "ts-standard": "^10.0.0",
     "typescript": "^4.2.3"
   }
