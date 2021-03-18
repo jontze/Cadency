@@ -1,7 +1,6 @@
 # Discord Bot
 
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
-![CodeQL](https://github.com/UsingPython/DiscordBot/workflows/CodeQL/badge.svg?branch=master&event=push)
 ![Linting](https://github.com/UsingPython/DiscordBot/workflows/Linting/badge.svg?branch=develop&event=push)
 ![GitHub last commit (branch)](https://img.shields.io/github/last-commit/UsingPython/DiscordBot/master)
 [![GitHub license](https://img.shields.io/github/license/UsingPython/DiscordBot)](https://github.com/UsingPython/DiscordBot/blob/master/LICENSE)
