@@ -1,18 +1,18 @@
-import { Command } from '../typings'
+import { Command } from "../typings";
 
 const Now: Command = {
-  name: 'now',
-  description: 'Show current song.',
+  name: "now",
+  description: "Show current song.",
   args: false,
   cooldown: 5,
-  usage: '',
+  usage: "",
   aliases: [],
   guildOnly: true,
-  execute (message, args) {
-    const voiceChannelUser = message.member?.voice.channel
+  execute(message, args) {
+    const voiceChannelUser = message.member?.voice.channel;
 
-    message.client.emit('currentSong', voiceChannelUser?.guild.id, message)
-  }
-}
+    message.client.emit("currentSong", voiceChannelUser?.guild.id, message);
+  },
+};
 
-export default Now
+export default Now;
