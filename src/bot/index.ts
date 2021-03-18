@@ -1,3 +1,3 @@
-import DiscordBot from './Bot'
+import DiscordBot from "./Bot";
 
-export default DiscordBot
+export default DiscordBot;
