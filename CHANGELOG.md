@@ -1,3 +1,10 @@
+## [1.2.6](https://github.com/UsingPython/DiscordBot/compare/v1.2.5...v1.2.6) (2021-03-21)
+
+
+### Bug Fixes
+
+* **publish-image:** Add missing tags ([c15d893](https://github.com/UsingPython/DiscordBot/commit/c15d8938e6f1344e9c86d85d6c123e9df63eb4ef))
+
 ## [1.2.5](https://github.com/UsingPython/DiscordBot/compare/v1.2.4...v1.2.5) (2021-03-18)
 
 
