@@ -1,3 +1,10 @@
+## [1.2.7](https://github.com/UsingPython/DiscordBot/compare/v1.2.6...v1.2.7) (2021-03-21)
+
+
+### Bug Fixes
+
+* **publish-image:** Correct tags name ([5da1128](https://github.com/UsingPython/DiscordBot/commit/5da112840431e5502f9cd5593b34d950095e86ef))
+
 ## [1.2.6](https://github.com/UsingPython/DiscordBot/compare/v1.2.5...v1.2.6) (2021-03-21)
 
 
