@@ -1,3 +1,10 @@
+## [1.2.10](https://github.com/UsingPython/DiscordBot/compare/v1.2.9...v1.2.10) (2021-03-22)
+
+
+### Bug Fixes
+
+* **basebot:** Fix code smell ([ac84c0c](https://github.com/UsingPython/DiscordBot/commit/ac84c0c398ddd2e8fc4f1212996713621b59a9b7))
+
 ## [1.2.9](https://github.com/UsingPython/DiscordBot/compare/v1.2.8...v1.2.9) (2021-03-21)
 
 
