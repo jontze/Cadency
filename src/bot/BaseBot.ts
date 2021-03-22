@@ -47,9 +47,7 @@ export default class BaseBot {
   }
 
   protected getCommand(name: string): Command | undefined {
-    const command: Command | undefined =
-      this.commands[name] ?? this.searchAliases(name);
-    return command;
+    return this.commands[name] ?? this.searchAliases(name);
   }
 
   protected searchAliases(name: string): Command | undefined {
