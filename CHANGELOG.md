@@ -1,3 +1,10 @@
+## [1.2.9](https://github.com/UsingPython/DiscordBot/compare/v1.2.8...v1.2.9) (2021-03-21)
+
+
+### Bug Fixes
+
+* **publish-image:** Change repo to lower-case ([2c41d09](https://github.com/UsingPython/DiscordBot/commit/2c41d09d6fdf36bd0738f85b5024f1aa2dee7877))
+
 ## [1.2.8](https://github.com/UsingPython/DiscordBot/compare/v1.2.7...v1.2.8) (2021-03-21)
 
 
