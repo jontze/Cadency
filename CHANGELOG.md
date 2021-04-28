@@ -1,3 +1,15 @@
+# [1.3.0](https://github.com/UsingPython/DiscordBot/compare/v1.2.10...v1.3.0) (2021-04-28)
+
+
+### Bug Fixes
+
+* **dependencies:** Update dependencies to latest ([51aae52](https://github.com/UsingPython/DiscordBot/commit/51aae52e0f3b7ff9bf02a61edbe53cee51e35e34))
+
+
+### Features
+
+* **devcontainer:** Setup typescript devcontainer with postgres ([76a7984](https://github.com/UsingPython/DiscordBot/commit/76a7984a146c262c2bec980e12e6ad619b6af518))
+
 ## [1.2.10](https://github.com/UsingPython/DiscordBot/compare/v1.2.9...v1.2.10) (2021-03-22)
 
 
