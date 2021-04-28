@@ -1,0 +1,27 @@
+{
+  "name": "NodeJS & Typescript with Postgres",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "remoteUser": "node",
+  "extensions": [
+    "dbaeumer.vscode-eslint",
+    "stevencl.adddoccomments",
+    "ryanluker.vscode-coverage-gutters",
+    "codezombiech.gitignore",
+    "eamodio.gitlens",
+    "ms-vsliveshare.vsliveshare",
+    "yzhang.markdown-all-in-one",
+    "shd101wyy.markdown-preview-enhanced",
+    "leizongmin.node-module-intellisense",
+    "esbenp.prettier-vscode",
+    "prisma.prisma",
+    "sonarsource.sonarlint-vscode",
+    "visualstudioexptteam.vscodeintellicode",
+    "ritwickdey.liveserver",
+    "redhat.vscode-yaml"
+  ]
+}
