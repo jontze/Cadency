@@ -8,7 +8,6 @@
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=UsingPython_DiscordBot&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=UsingPython_DiscordBot)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=UsingPython_DiscordBot&metric=security_rating)](https://sonarcloud.io/dashboard?id=UsingPython_DiscordBot)
 
-
 - [Discord Bot](#discord-bot)
   - [Requirements](#requirements)
   - [Installation](#installation)
