@@ -1,6 +1,11 @@
 import { Command } from "../typings";
-import logger from "../logger";
+import { Role } from ".prisma/client";
+import messageContent from "../message-content";
 
+/**
+ * Ping-pong command. Mainly used for testing the availability
+ * and delay of the bot.
+ */
 const Ping: Command = {
   name: "ping",
   description: "Ping-Pong!",
@@ -9,10 +14,9 @@ const Ping: Command = {
   args: false,
   aliases: [],
   guildOnly: false,
-  execute: (message, args): void => {
-    message.channel.send("Pong").catch((err) => {
-      logger.error(err);
-    });
+  permission: Role.MEMBER,
+  execute: async (message, args): Promise<void> => {
+    await message.channel.send(messageContent.command.pong);
   },
 };
 

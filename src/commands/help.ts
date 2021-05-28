@@ -1,8 +1,11 @@
-import { MessageEmbed } from "discord.js";
 import { Command } from "../typings";
-import cmd from "../commands";
-import logger from "../logger";
+import { Role } from ".prisma/client";
+import messageContent from "../message-content";
 
+/**
+ * Command that send a list of all available commands per DM to
+ * the for help asking user
+ */
 const Help: Command = {
   name: "help",
   description: "List all of my commands.",
@@ -11,31 +14,12 @@ const Help: Command = {
   usage: "",
   aliases: ["commands"],
   guildOnly: false,
-  execute(message, args) {
-    const embed = new MessageEmbed()
-      .setColor("#008000")
-      .setTitle("A list of all commands");
-    let position = 1;
-    for (const key in cmd) {
-      if (Object.prototype.hasOwnProperty.call(cmd, key)) {
-        const element = cmd[key];
-        embed.addField(
-          `${position}. ${element.description}`,
-          `${element.name} ${element.usage}\ncooldown: ${element.cooldown} ${
-            element.aliases.length === 0
-              ? ""
-              : `\naliases: ${element.aliases.join(", ")}`
-          }`
-        );
-        position = position + 1;
-      }
-    }
-    message.channel
-      .send(
-        `I send you a DM with a list of my commands, @${message.author.toString()}`
-      )
-      .catch((err) => logger.error(err));
-    message.author.send(embed).catch((err) => logger.error(err));
+  permission: Role.MEMBER,
+  execute: async (message, args): Promise<void> => {
+    await message.channel.send(
+      messageContent.command.helpDM(message.author.toString())
+    );
+    await message.author.send(messageContent.command.help());
   },
 };
 

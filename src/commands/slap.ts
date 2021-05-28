@@ -1,6 +1,11 @@
 import { Command } from "../typings";
-import logger from "../logger";
+import { Role } from ".prisma/client";
+import messageContent from "../message-content";
 
+/**
+ * Command to slap a another player on the server with a large
+ * trout.
+ */
 const Slap: Command = {
   name: "slap",
   description: "Slap someone with a large trout!",
@@ -9,31 +14,28 @@ const Slap: Command = {
   usage: "<@Playername>",
   cooldown: 5,
   aliases: [],
-  execute(message, args) {
-    const author = message.author;
-    const botId = "<@719512910979661836>";
-    if (author.toString() === args[0]) {
-      message.channel
-        .send(`Why do you want to slap yourself, ${author.toString()}?`)
-        .catch((err) => logger.error(err));
+  permission: Role.MEMBER,
+  execute: async (message, args): Promise<void> => {
+    const author = message.author.toString();
+    const botId = message.client.user?.toString();
+    const slapTarget = args[0];
+    if (slapTarget == null) throw new Error("Args undefined");
+    if (author.toString() === slapTarget.replace("!", "")) {
+      await message.channel.send(
+        messageContent.command.slapYourself(author.toString())
+      );
       return;
     }
-    if (args[0] === botId) {
-      message.channel.send("Nope!").catch((err) => logger.error(err));
-      message.channel
-        .send(
-          `${botId} slaps ${author.toString()} around a bit with a large trout!`
-        )
-        .catch((err) => logger.error(err));
+
+    if (slapTarget.replace("!", "") === botId && botId != null) {
+      await message.channel.send(
+        messageContent.command.slapBot(botId, author.toString())
+      );
       return;
     }
-    message.channel
-      .send(
-        `${message.author.toString()} slaps ${
-          args[0]
-        } around a bit with a large trout!`
-      )
-      .catch((err) => logger.error(err));
+    await message.channel.send(
+      messageContent.command.slap(author.toString(), slapTarget)
+    );
   },
 };
 
