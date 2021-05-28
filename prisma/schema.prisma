@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+/// Databasemodel describing a server
+model Server {
+  /// Unique database id
+  id            Int         @id @default(autoincrement())
+  /// Unique discord server id
+  discordId     String         @unique
+  /// Discord server name
+  name          String?
+  /// Discord server bot prefix
+  prefix        String      @default("!")
+  /// Timestamp of creation
+  createdAt     DateTime    @default(now())
+  /// Timestamp of last update
+  updatedAt     DateTime    @updatedAt
+  /// Discord user with special permissions to interact with the bot
+  user          User[]
+}
+
+/// Databasemodel describing a user
+model User {
+  /// Unique database id
+  id            Int         @id @default(autoincrement())
+  /// Unique discord user id
+  discordId     String         @unique
+  /// Discord user name
+  name          String
+  /// Role associated to the user
+  role          Role        @default(MEMBER)
+  /// Timestamp of creation
+  createdAt     DateTime    @default(now())
+  /// Timestamp of last update
+  updatedAt     DateTime    @updatedAt
+  /// Discord server related to the user
+  server        Server      @relation(fields: [serverId], references: [id])
+  /// Unique server id related to the user 
+  serverId      Int
+}
+
+/// Enum with different user roles
+enum Role {
+  /// Admin role with full permissions
+  ADMIN
+  /// Very-important-user role with nearly all permissions
+  VIU
+  /// Member role with minimal permissions
+  MEMBER
+}
