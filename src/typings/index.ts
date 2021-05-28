@@ -1,25 +1,13 @@
+import { Role } from ".prisma/client";
 import {
   Message,
-  ActivityType,
   TextChannel,
   DMChannel,
   NewsChannel,
   VoiceChannel,
   VoiceConnection,
-  PresenceData,
 } from "discord.js";
 import { MoreVideoDetails } from "ytdl-core";
-
-export interface BotInterface {
-  start: () => void;
-}
-
-export interface BotConfig {
-  prefix: string;
-  activity: string;
-  activityType: ActivityType;
-  status: PresenceData["status"];
-}
 
 export interface Command {
   readonly name: string;
@@ -29,12 +17,9 @@ export interface Command {
   readonly args: boolean;
   readonly guildOnly: boolean;
   readonly aliases: string[];
-  execute: (message: Message, args: string[]) => void;
+  readonly permission: Role;
+  execute: (message: Message, args: string[]) => Promise<void>;
 }
-
-export type Commands = {
-  [name in string]: Command;
-};
 
 export interface UrbanDictionary {
   definition: string;
@@ -50,11 +35,37 @@ export interface UrbanDictionary {
   thumbs_down: number;
 }
 
-export interface QueueSong {
+export interface IQueueSong {
   textChannel: TextChannel | DMChannel | NewsChannel;
-  voiceChannel: VoiceChannel | null | undefined;
-  connection: VoiceConnection | null;
+  voiceChannel: VoiceChannel;
+  connection?: VoiceConnection;
   songs: MoreVideoDetails[];
   volume: number;
   playing: boolean;
+}
+
+export interface ISong {
+  textChannel: TextChannel | DMChannel | NewsChannel;
+  voiceChannel: VoiceChannel;
+  info: MoreVideoDetails;
+}
+
+export type CommandLoaderType = Partial<Record<COMMAND, Command>>;
+
+export enum COMMAND {
+  FIB = "FIB",
+  HELP = "HELP",
+  INSPIRE = "INSPIRE",
+  NOW = "NOW",
+  PAUSE = "PAUSE",
+  PING = "PING",
+  PLAY = "PLAY",
+  PURGE = "PURGE",
+  RESUME = "RESUME",
+  SEARCH = "SEARCH",
+  SHOW = "SHOW",
+  SKIP = "SKIP",
+  SLAP = "SLAP",
+  URBAN = "URBAN",
+  PREFIX = "PREFIX",
 }
