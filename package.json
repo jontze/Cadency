@@ -4,14 +4,23 @@
   "description": "A simple Discord-Music-Bot, written with discord.js and TypeScript",
   "homepage": "https://github.com/UsingPython/DiscordBot",
   "bugs": "https://github.com/UsingPython/DiscordBot/issues",
-  "main": "dist/index.js",
+  "main": "dist/main.js",
   "scripts": {
+    "prebuild": "yarn db:generate",
     "build": "tsc",
     "lint": "prettier . --check",
     "format": "prettier . --write",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node dist/index.js",
-    "semantic-release": "semantic-release"
+    "test": "jest",
+    "prestart": "yarn db:generate && yarn db:migrate:prod",
+    "start": "node dist/main.js",
+    "serve": "ts-node src/main.ts",
+    "semantic-release": "semantic-release",
+    "db:gui": "prisma studio",
+    "db:generate": "prisma generate",
+    "db:migrate:reset": "prisma migrate reset",
+    "db:migrate:status": "prisma migrate status",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:migrate:prod": "prisma migrate deploy"
   },
   "author": "UsingPython",
   "repository": {
@@ -21,6 +30,7 @@
   "license": "MIT",
   "dependencies": {
     "@discordjs/opus": "^0.5.0",
+    "@prisma/client": "^2.23.0",
     "axios": "^0.21.1",
     "discord.js": "^12.5.3",
     "dotenv": "^10.0.0",
@@ -34,16 +44,22 @@
   "devDependencies": {
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/git": "^9.0.0",
+    "@types/jest": "^26.0.23",
     "@types/node": "^15.6.0",
     "@typescript-eslint/eslint-plugin": "^4.24.0",
+    "axios-mock-adapter": "^1.19.0",
     "eslint": "^7.27.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.3",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-promise": "^5.1.0",
+    "jest": "^27.0.1",
     "prettier": "^2.3.0",
+    "prisma": "^2.23.0",
     "semantic-release": "^17.4.3",
+    "ts-jest": "^27.0.1",
+    "ts-node": "^10.0.0",
     "typescript": "^4.2.4"
   }
 }
