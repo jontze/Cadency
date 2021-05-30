@@ -1,3 +1,28 @@
+# [2.0.0](https://github.com/UsingPython/DiscordBot/compare/v1.3.0...v2.0.0) (2021-05-30)
+
+
+* refactor(main)!: Refactor entry file to use updated name of main class ([a43866b](https://github.com/UsingPython/DiscordBot/commit/a43866bf452094a0bb681489e0d5534039fb739c))
+* refactor(bot)!: Rename discordbot class to cadency and refactor ([dca88a4](https://github.com/UsingPython/DiscordBot/commit/dca88a482e233760fdc438481567b3337ebf04b5))
+* feat(base)!: Refactor and initialize new Database class ([f0490d7](https://github.com/UsingPython/DiscordBot/commit/f0490d74d70d1a8753b646714ed3a6a50107899a))
+
+
+### Features
+
+* **commands:** Add command to change prefix ([6529fd5](https://github.com/UsingPython/DiscordBot/commit/6529fd58122ed037e58843c7a767abe7920189e1))
+* **commands:** Remove `test` command ([46189be](https://github.com/UsingPython/DiscordBot/commit/46189be3428783144e762c0d4b18236978c9a7bc))
+* **config:** Setup config class with default constants ([29b720c](https://github.com/UsingPython/DiscordBot/commit/29b720ce31cc4893251191b8ed2f83041642457c))
+* **database:** Create prismaORM wrapper classes ([726ecbb](https://github.com/UsingPython/DiscordBot/commit/726ecbbe729683e62dc60c4a025377868f880c0b))
+* **errors:** Setup custom errors to improve error handling to user ([027dead](https://github.com/UsingPython/DiscordBot/commit/027dead18f6ea8d57f9fecc7520b936ef0442a14))
+* **messageHandler:** Add command handler to execute command pass custom errorsto user ([a522c91](https://github.com/UsingPython/DiscordBot/commit/a522c91762b504cb0dbcd69f8e65523583924537))
+* **prisma:** Setup schema and init migration ([4228c9f](https://github.com/UsingPython/DiscordBot/commit/4228c9f9ea352743215cd198e7f39b9dc2c4ce1f))
+
+
+### BREAKING CHANGES
+
+* Now `main.js` is used to start the application instead of `index.js`
+* `DiscordBot` class renamed to `Cadency`
+* The usage of the bot now *requires* a running postgres database
+
 # [1.3.0](https://github.com/UsingPython/DiscordBot/compare/v1.2.10...v1.3.0) (2021-04-28)
 
 
