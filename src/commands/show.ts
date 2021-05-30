@@ -1,6 +1,10 @@
+import { Role } from ".prisma/client";
 import { Command } from "../typings";
-import * as music from "../utils/music";
+import { getGuildId, validateVoiceCommand } from "../utils/discord";
 
+/**
+ * Command to list all songs in the playlist
+ */
 const Show: Command = {
   name: "show",
   description: "Show all songs in the queue!",
@@ -9,11 +13,10 @@ const Show: Command = {
   usage: "",
   aliases: [],
   guildOnly: true,
-  execute(message, args) {
-    const voiceChannelUser = message.member?.voice.channel;
-    if (music.validateVoiceChannel(message)) {
-      message.client.emit("showPlaylist", voiceChannelUser?.guild.id, message);
-    }
+  permission: Role.MEMBER,
+  execute: async (message, args): Promise<void> => {
+    validateVoiceCommand(Show, args, message);
+    message.client.emit("showPlaylist", getGuildId(message), message);
   },
 };
 

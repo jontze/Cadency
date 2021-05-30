@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  app:
+    image: ghcr.io/usingpython/discordbot:latest
+    env_file: ./.env
+    restart: unless-stopped
+  postgres:
+    image: postgres:13-alpine
+    env_file: ./.env
+    volumes:
+      - pgdiscordbotdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  pgdiscordbotdata:

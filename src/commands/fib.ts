@@ -1,5 +1,7 @@
 import { Command } from "../typings";
-import logger from "../logger";
+import { Role } from ".prisma/client";
+import { CommandArgsError } from "../errors/command";
+import messageContent from "../message-content";
 
 function fib(n: number): number {
   const phi = (1 + Math.sqrt(5)) / 2;
@@ -7,6 +9,9 @@ function fib(n: number): number {
   return Math.round(asymp);
 }
 
+/**
+ * Command to calculate the nth position in the fibonacci series
+ */
 const Fib: Command = {
   name: "fib",
   description: "Calculate the nth Number in the Fibonacci Series",
@@ -15,14 +20,14 @@ const Fib: Command = {
   guildOnly: true,
   cooldown: 2,
   aliases: [],
-  execute(message, args) {
+  permission: Role.MEMBER,
+  execute: async (message, args): Promise<void> => {
+    if (args[0] == null) throw new CommandArgsError("Args undefined");
     const inputNumber = parseFloat(args[0]);
     if (!isNaN(inputNumber)) {
-      message.channel.send(fib(inputNumber)).catch((err) => logger.error(err));
+      await message.channel.send(fib(inputNumber));
     } else {
-      message.channel
-        .send(`Is \`${args[0]}\` really a valid number?`)
-        .catch((err) => logger.error(err));
+      await message.channel.send(messageContent.command.fibFail(args[0]));
     }
   },
 };

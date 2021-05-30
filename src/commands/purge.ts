@@ -1,6 +1,10 @@
+import { Role } from ".prisma/client";
 import { Command } from "../typings";
-import * as music from "../utils/music";
+import { getGuildId, validateVoiceCommand } from "../utils/discord";
 
+/**
+ * Command to clear all songs in the playlist and stop playing music
+ */
 const Purge: Command = {
   name: "purge",
   description: "Delete all songs in the queue and stop the music!",
@@ -9,11 +13,10 @@ const Purge: Command = {
   usage: "",
   aliases: [],
   guildOnly: true,
-  execute(message, args) {
-    const voiceChannelUser = message.member?.voice.channel;
-    if (music.validateVoiceChannel(message)) {
-      message.client.emit("purgePlaylist", voiceChannelUser?.guild.id, message);
-    }
+  permission: Role.MEMBER,
+  execute: async (message, args): Promise<void> => {
+    validateVoiceCommand(Purge, args, message);
+    message.client.emit("purgePlaylist", getGuildId(message), message);
   },
 };
 
