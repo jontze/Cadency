@@ -32,7 +32,6 @@ jobs:
           name: lcov.info
           path: coverage/lcov.info
   sonarcloud:
-    needs: unittest
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -49,7 +48,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   build:
-    needs: sonarcloud
+    needs: [lint, unittest]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -62,7 +61,7 @@ jobs:
       - name: Build Step
         run: yarn build
   release:
-    needs: build
+    needs: [build, sonarcloud]
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
