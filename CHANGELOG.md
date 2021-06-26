@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/UsingPython/DiscordBot/compare/v2.0.0...v2.0.1) (2021-06-26)
+
+
+### Bug Fixes
+
+* Update node-ytdl to fix 404 errors ([1b77550](https://github.com/UsingPython/DiscordBot/commit/1b77550f6bd9c4bc58d42a72999b2c0718efc80e))
+
 # [2.0.0](https://github.com/UsingPython/DiscordBot/compare/v1.3.0...v2.0.0) (2021-05-30)
 
 
