@@ -33,6 +33,7 @@ jobs:
           path: coverage/lcov.info
   sonarcloud:
     needs: unittest
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
