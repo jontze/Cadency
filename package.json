@@ -32,7 +32,7 @@
     "@discordjs/opus": "^0.5.3",
     "@prisma/client": "^2.28.0",
     "axios": "^0.21.1",
-    "discord.js": "^12.5.3",
+    "discord.js": "^13.0.1",
     "dotenv": "^10.0.0",
     "ffmpeg": "^0.0.4",
     "fluent-ffmpeg": "^2.1.2",
