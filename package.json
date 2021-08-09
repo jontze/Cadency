@@ -38,7 +38,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "query-string": "^7.0.0",
     "winston": "^3.3.3",
-    "ytdl-core": "^4.9.0",
+    "ytdl-core": "^4.9.1",
     "ytsr": "^3.5.0"
   },
   "devDependencies": {
