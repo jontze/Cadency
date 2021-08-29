@@ -1,7 +1,8 @@
 import Urban from "./urban";
-import { Client, Message, TextChannel } from "discord.js";
+import { Client, Message } from "discord.js";
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
+import { RawMessageData } from "discord.js/typings/rawDataTypes";
 
 // Message mocks
 const mockMsgSend = jest.fn().mockResolvedValue({});
@@ -41,11 +42,7 @@ describe("Urban command", () => {
   beforeEach(() => {
     mockMsgSend.mockClear();
 
-    msg = new Message(
-      {} as unknown as Client,
-      {},
-      "" as unknown as TextChannel
-    );
+    msg = new Message({} as unknown as Client, {} as unknown as RawMessageData);
   });
 
   it("should execute command and send an embed message", async () => {
@@ -66,7 +63,9 @@ describe("Urban command", () => {
       });
     const testQuery = "test";
     await Urban.execute(msg, [testQuery]);
-    expect(mockMsgSend).toHaveBeenCalledWith({ setColor: mockEmbedColorSet });
+    expect(mockMsgSend).toHaveBeenCalledWith({
+      embeds: [{ setColor: mockEmbedColorSet }],
+    });
   });
 
   it("should execute command and send message that no entry exists", async () => {

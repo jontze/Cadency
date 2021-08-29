@@ -1,10 +1,4 @@
-import {
-  Client,
-  Message,
-  MessageReaction,
-  TextChannel,
-  User,
-} from "discord.js";
+import { MessageReaction, User } from "discord.js";
 import {
   filterSearchReactions,
   getSongInfo,
@@ -43,18 +37,11 @@ jest.mock("ytdl-core", () => ({
 jest.mock("../logger");
 
 describe("Music utils", () => {
-  let msg: Message;
-
   beforeEach(() => {
     mockValidateUrlResponse = null;
     mockGetInfoResponse = null;
     mockYtsrResponse = null;
     jest.clearAllMocks();
-    msg = new Message(
-      {} as unknown as Client,
-      {},
-      "" as unknown as TextChannel
-    );
   });
 
   it("should find reaction in array", () => {
@@ -75,6 +62,16 @@ describe("Music utils", () => {
         emoji: {
           name: "RandomReaction",
         },
+      } as unknown as MessageReaction,
+      {} as unknown as User
+    );
+    expect(filterRes).toBe(false);
+  });
+
+  it("should return false if reaction emoji name is null", () => {
+    const filterRes = filterSearchReactions(
+      {
+        emoji: {},
       } as unknown as MessageReaction,
       {} as unknown as User
     );

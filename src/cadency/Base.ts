@@ -1,4 +1,4 @@
-import { Client, Message } from "discord.js";
+import { Client, Intents, Message } from "discord.js";
 import { messageHandler } from "../events/messageHandler";
 import messageContent from "../message-content";
 import Config from "./Config";
@@ -12,7 +12,15 @@ import { getPrefix } from "../utils/database";
  * @param {Config} config Configuration class
  */
 export default class Base {
-  protected readonly client = new Client();
+  protected readonly client = new Client({
+    intents: [
+      Intents.FLAGS.GUILDS,
+      Intents.FLAGS.GUILD_MESSAGES,
+      Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+      Intents.FLAGS.GUILD_MEMBERS,
+      Intents.FLAGS.GUILD_VOICE_STATES,
+    ],
+  });
   protected readonly db = new Database();
 
   constructor(private readonly config: Config) {
@@ -62,18 +70,18 @@ export default class Base {
         logger.warn("User undefined. Could not set presence.");
         return;
       }
-      this.client.user
-        .setPresence({
-          activity: {
-            name: this.config.activity,
+      this.client.user.setPresence({
+        status: this.config.status,
+        activities: [
+          {
             type: this.config.activityType,
+            name: this.config.activity,
           },
-          status: this.config.status,
-        })
-        .catch((err) => logger.error("Error try to set presence", err));
+        ],
+      });
     });
 
     // Listen to incoming messages
-    this.client.on("message", this.messageHandlerWrapper.bind(this));
+    this.client.on("messageCreate", this.messageHandlerWrapper.bind(this));
   }
 }

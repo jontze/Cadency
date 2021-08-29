@@ -1,12 +1,10 @@
 import { Role } from ".prisma/client";
 import {
-  Message,
-  TextChannel,
-  DMChannel,
-  NewsChannel,
-  VoiceChannel,
+  AudioPlayer,
+  DiscordGatewayAdapterCreator,
   VoiceConnection,
-} from "discord.js";
+} from "@discordjs/voice";
+import { Message, TextBasedChannels } from "discord.js";
 import { MoreVideoDetails } from "ytdl-core";
 
 export interface Command {
@@ -36,17 +34,20 @@ export interface UrbanDictionary {
 }
 
 export interface IQueueSong {
-  textChannel: TextChannel | DMChannel | NewsChannel;
-  voiceChannel: VoiceChannel;
+  textChannel: TextBasedChannels;
+  voiceChannelId: string;
+  voiceAdapter: DiscordGatewayAdapterCreator;
   connection?: VoiceConnection;
+  player?: AudioPlayer;
   songs: MoreVideoDetails[];
   volume: number;
   playing: boolean;
 }
 
 export interface ISong {
-  textChannel: TextChannel | DMChannel | NewsChannel;
-  voiceChannel: VoiceChannel;
+  textChannel: TextBasedChannels;
+  voiceChannelId: string;
+  voiceAdapter: DiscordGatewayAdapterCreator;
   info: MoreVideoDetails;
 }
 

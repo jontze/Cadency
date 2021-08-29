@@ -25,7 +25,7 @@ export default {
      * @returns {string} Message
      */
     addFirst: (song: ISong): string => {
-      return `:white_check_mark: **Joined** ${song.voiceChannel.name}\n**Playing** :notes: \`${song.info.video_url}\` \n:newspaper: \`${song.info.title}\``;
+      return `:white_check_mark: **Joined** <#${song.voiceChannelId}>\n**Playing** :notes: \`${song.info.video_url}\` \n:newspaper: \`${song.info.title}\``;
     },
     /**
      * Message if a song is added to an existing queue
@@ -152,6 +152,7 @@ export default {
       return embed;
     },
     searchReactionFailed: ":x: **I don't know what to do with this reaction!**",
+    playFailed: ":x: **Invalid voice channel!**",
   },
   error: {
     fatal:

@@ -1,6 +1,7 @@
 import Now from "./now";
-import { Client, Message, TextChannel } from "discord.js";
+import { Client, Message } from "discord.js";
 import { getGuildId, validateVoiceCommand } from "../utils/discord";
+import { RawMessageData } from "discord.js/typings/rawDataTypes";
 
 const mockMsgSend = jest.fn().mockResolvedValue({});
 const mockEmit = jest.fn();
@@ -28,11 +29,7 @@ describe("Now command", () => {
   beforeEach(() => {
     mockEmit.mockClear();
 
-    msg = new Message(
-      {} as unknown as Client,
-      {},
-      "" as unknown as TextChannel
-    );
+    msg = new Message({} as unknown as Client, {} as unknown as RawMessageData);
   });
 
   it("should execute command", async () => {

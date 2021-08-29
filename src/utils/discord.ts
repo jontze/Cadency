@@ -1,5 +1,5 @@
 import { Role } from ".prisma/client";
-import { Message } from "discord.js";
+import { Message, Permissions } from "discord.js";
 import {
   CommandArgsError,
   CommandGuildError,
@@ -33,7 +33,7 @@ export const validateCommand = (
   args: string[],
   message: Message
 ): void => {
-  if (command.guildOnly && message.channel.type !== "text") {
+  if (command.guildOnly && message.channel.type !== "GUILD_TEXT") {
     throw new CommandGuildError(messageContent.error.command.guildOnly);
   }
   if (command.args && args.length === 0) {
@@ -41,7 +41,7 @@ export const validateCommand = (
   }
   if (
     command.permission === Role.ADMIN &&
-    !message.member?.hasPermission("ADMINISTRATOR")
+    !message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)
   ) {
     throw new CommandPermissionError(messageContent.error.command.noPermission);
   }

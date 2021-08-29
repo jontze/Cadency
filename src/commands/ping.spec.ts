@@ -2,7 +2,8 @@ import Ping from "./ping";
 
 const mockMsgSend = jest.fn().mockResolvedValue({});
 
-import { Client, Message, TextChannel } from "discord.js";
+import { Client, Message } from "discord.js";
+import { RawMessageData } from "discord.js/typings/rawDataTypes";
 
 jest.mock("discord.js", () => {
   return {
@@ -21,11 +22,7 @@ describe("Ping command", () => {
 
   beforeEach(() => {
     mockMsgSend.mockClear();
-    msg = new Message(
-      {} as unknown as Client,
-      {},
-      "" as unknown as TextChannel
-    );
+    msg = new Message({} as unknown as Client, {} as unknown as RawMessageData);
   });
 
   it("should execute command", async () => {
