@@ -5,7 +5,8 @@ const mockAuthor = {
   toString: jest.fn(),
 };
 
-import { Client, Message, TextChannel } from "discord.js";
+import { Client, Message } from "discord.js";
+import { RawMessageData } from "discord.js/typings/rawDataTypes";
 
 const botId = "botId";
 
@@ -36,11 +37,7 @@ describe("Slap command", () => {
   beforeEach(() => {
     mockMsgSend.mockClear();
     mockAuthor.toString.mockClear();
-    msg = new Message(
-      {} as unknown as Client,
-      {},
-      "" as unknown as TextChannel
-    );
+    msg = new Message({} as unknown as Client, {} as unknown as RawMessageData);
   });
 
   it("should execute command and try to slap yourself", async () => {

@@ -1,7 +1,8 @@
 import Inspire from "./inspire";
-import { Client, Message, TextChannel } from "discord.js";
+import { Client, Message } from "discord.js";
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
+import { RawMessageData } from "discord.js/typings/rawDataTypes";
 
 // Message mocks
 const mockMsgSend = jest.fn().mockResolvedValue({});
@@ -27,11 +28,7 @@ describe("Inspire command", () => {
   beforeEach(() => {
     mockMsgSend.mockClear();
 
-    msg = new Message(
-      {} as unknown as Client,
-      {},
-      "" as unknown as TextChannel
-    );
+    msg = new Message({} as unknown as Client, {} as unknown as RawMessageData);
   });
 
   it("should execute command", async () => {

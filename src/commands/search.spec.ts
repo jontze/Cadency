@@ -1,9 +1,10 @@
-import { Client, Message, TextChannel } from "discord.js";
+import { Client, Message } from "discord.js";
 import Search from "./search";
 
 import { searchQuery } from "../utils/music";
 import { getGuildId, validateVoiceCommand } from "../utils/discord";
 import { CommandError } from "../errors/command";
+import { RawMessageData } from "discord.js/typings/rawDataTypes";
 
 // Discord mocks
 const mockEmit = jest.fn();
@@ -35,6 +36,9 @@ jest.mock("discord.js", () => {
   return {
     Message: jest.fn().mockImplementation(() => {
       return {
+        guild: {
+          voiceAdapterCreator: jest.fn(),
+        },
         client: {
           emit: mockEmit,
         },
@@ -108,11 +112,7 @@ describe("Search command", () => {
     mockFilterSearchReactionsResponse = true;
     mockRequestSongInfoResponse = {};
 
-    msg = new Message(
-      {} as unknown as Client,
-      {},
-      "" as unknown as TextChannel
-    );
+    msg = new Message({} as unknown as Client, {} as unknown as RawMessageData);
   });
 
   it("should execute command and emit 'addSong' event", async () => {

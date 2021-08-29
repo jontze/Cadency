@@ -48,7 +48,7 @@ const Urban: Command = {
             value: `${firstMatch.thumbs_up} :thumbsup: \n ${firstMatch.thumbs_down} :thumbsdown:`,
           }
         );
-      await message.channel.send(embed);
+      await message.channel.send({ embeds: [embed] });
     }
   },
 };

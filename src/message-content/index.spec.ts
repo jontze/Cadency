@@ -1,4 +1,5 @@
-import { TextChannel, VoiceChannel } from "discord.js";
+import { DiscordGatewayAdapterCreator } from "@discordjs/voice";
+import { TextChannel } from "discord.js";
 import { MoreVideoDetails } from "ytdl-core";
 import { Video } from "ytsr";
 import messageContent from ".";
@@ -10,10 +11,9 @@ describe("Message content", () => {
 
   beforeEach(() => {
     dummySong = {
+      voiceAdapter: {} as unknown as DiscordGatewayAdapterCreator,
       textChannel: {} as unknown as TextChannel,
-      voiceChannel: {
-        name: "TestName",
-      } as unknown as VoiceChannel,
+      voiceChannelId: "channelId",
       info: {
         video_url: "www.test.test",
         title: "TestTitle",
@@ -28,7 +28,7 @@ describe("Message content", () => {
   it("should create addFirst song message", () => {
     expect.assertions(3);
     const msg = messageContent.song.addFirst(dummySong);
-    expect(msg).toContain("TestName");
+    expect(msg).toContain("channelId");
     expect(msg).toContain("TestTitle");
     expect(msg).toContain("www.test.test");
   });

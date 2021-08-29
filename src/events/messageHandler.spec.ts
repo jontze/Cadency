@@ -1,4 +1,4 @@
-import { Client, Message, TextChannel, User } from "discord.js";
+import { Client, Message, User } from "discord.js";
 import {
   CommandArgsError,
   CommandError,
@@ -9,6 +9,7 @@ import logger from "../logger";
 import messageContent from "../message-content";
 import { messageErrorHandler, messageHandler } from "./messageHandler";
 import { validateCommand } from "../utils/discord";
+import { RawMessageData } from "discord.js/typings/rawDataTypes";
 
 // Discord mocks
 const mockMsgSend = jest.fn();
@@ -34,11 +35,7 @@ describe("Message handler", () => {
   beforeEach(() => {
     mockMsgSend.mockClear();
     jest.clearAllMocks();
-    msg = new Message(
-      {} as unknown as Client,
-      {},
-      "TextChannel" as unknown as TextChannel
-    );
+    msg = new Message({} as unknown as Client, {} as unknown as RawMessageData);
   });
 
   it("should handle received CommandGuildErrors", async () => {

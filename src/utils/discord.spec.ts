@@ -1,5 +1,6 @@
 import { Role } from ".prisma/client";
-import { Client, Message, TextChannel } from "discord.js";
+import { Client, Message } from "discord.js";
+import { RawMessageData } from "discord.js/typings/rawDataTypes";
 import { CommandVoiceError } from "../errors/command";
 import messageContent from "../message-content";
 import { Command } from "../typings";
@@ -20,6 +21,9 @@ const mockHasPermission = jest.fn();
 
 jest.mock("discord.js", () => {
   return {
+    Permissions: {
+      FLAGS: {},
+    },
     Message: jest.fn().mockImplementation(() => {
       return {
         member: {
@@ -29,7 +33,9 @@ jest.mock("discord.js", () => {
               id: mockVoiceId,
             },
           },
-          hasPermission: mockHasPermission,
+          permissions: {
+            has: mockHasPermission,
+          },
         },
         client: {
           user: mockClientUser,
@@ -50,11 +56,7 @@ describe("Discord Utils", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    msg = new Message(
-      {} as unknown as Client,
-      {},
-      "" as unknown as TextChannel
-    );
+    msg = new Message({} as unknown as Client, {} as unknown as RawMessageData);
   });
 
   it("should extract guild id", () => {
@@ -71,7 +73,7 @@ describe("Discord Utils", () => {
       guildOnly: true,
       args: true,
     } as unknown as Command;
-    msg.channel.type = "text";
+    msg.channel.type = "GUILD_TEXT";
 
     expect(() => validateCommand(command, ["test"], msg)).not.toThrowError();
     expect(mockHasPermission).toHaveBeenCalled();
@@ -85,7 +87,7 @@ describe("Discord Utils", () => {
       guildOnly: true,
       args: true,
     } as unknown as Command;
-    msg.channel.type = "text";
+    msg.channel.type = "GUILD_TEXT";
 
     expect(() => validateCommand(command, [], msg)).toThrowError(
       messageContent.error.command.noArgs
@@ -101,7 +103,7 @@ describe("Discord Utils", () => {
       guildOnly: true,
       args: true,
     } as unknown as Command;
-    msg.channel.type = "dm";
+    msg.channel.type = "DM";
 
     expect(() => validateCommand(command, ["test"], msg)).toThrowError(
       messageContent.error.command.guildOnly
@@ -118,7 +120,7 @@ describe("Discord Utils", () => {
       guildOnly: true,
       args: true,
     } as unknown as Command;
-    msg.channel.type = "text";
+    msg.channel.type = "GUILD_TEXT";
 
     expect(() => validateCommand(command, ["test"], msg)).toThrowError(
       messageContent.error.command.noPermission
@@ -135,7 +137,7 @@ describe("Discord Utils", () => {
       guildOnly: true,
       args: true,
     } as unknown as Command;
-    msg.channel.type = "text";
+    msg.channel.type = "GUILD_TEXT";
 
     expect(() =>
       validateVoiceCommand(command, ["test"], msg)
@@ -153,7 +155,7 @@ describe("Discord Utils", () => {
       guildOnly: true,
       args: true,
     } as unknown as Command;
-    msg.channel.type = "text";
+    msg.channel.type = "GUILD_TEXT";
     try {
       validateVoiceCommand(command, ["test"], msg);
     } catch (e) {

@@ -1,3 +1,11 @@
+import {
+  AudioPlayerStatus,
+  createAudioPlayer,
+  createAudioResource,
+  entersState,
+  joinVoiceChannel,
+  VoiceConnectionStatus,
+} from "@discordjs/voice";
 import { Collection, Message } from "discord.js";
 import ytdl from "ytdl-core";
 import logger from "../logger";
@@ -66,7 +74,8 @@ export default class Cadency extends Base {
     if (serverSongs == null) {
       const listedSong: IQueueSong = {
         textChannel: song.textChannel,
-        voiceChannel: song.voiceChannel,
+        voiceChannelId: song.voiceChannelId,
+        voiceAdapter: song.voiceAdapter,
         songs: [],
         volume: 5,
         playing: false,
@@ -94,8 +103,19 @@ export default class Cadency extends Base {
     message: Message
   ): Promise<void> {
     const guildData = this.songList.get(guildId);
-    if (guildData?.connection != null && guildData.songs.length > 0) {
-      guildData.connection.dispatcher.end();
+    if (
+      guildData?.connection != null &&
+      guildData.songs != null &&
+      guildData.songs.length > 0 &&
+      guildData.connection.state.status !== VoiceConnectionStatus.Destroyed
+    ) {
+      guildData.songs.shift();
+      guildData.connection.state.subscription?.unsubscribe();
+      if (guildData.songs.length === 0) {
+        this.songList.delete(guildId);
+        guildData.connection.destroy();
+      }
+      this.playGuildPlaylist(guildId);
       await message.channel.send(messageContent.song.skiped);
       return;
     }
@@ -116,15 +136,17 @@ export default class Cadency extends Base {
     const guildData = this.songList.get(guildId);
     if (
       guildData == null ||
+      guildData.songs == null ||
       guildData.songs.length === 0 ||
-      guildData.connection == null
+      guildData.connection == null ||
+      guildData.connection.state.status === VoiceConnectionStatus.Destroyed
     ) {
       await message.channel.send(messageContent.song.showPlaylistFailed);
       return;
     }
-    await message.channel.send(
-      messageContent.song.showPlaylist(guildData.songs)
-    );
+    await message.channel.send({
+      embeds: [messageContent.song.showPlaylist(guildData.songs)],
+    });
   }
 
   /**
@@ -143,14 +165,16 @@ export default class Cadency extends Base {
     if (
       guildData == null ||
       guildData?.connection == null ||
-      guildData.songs.length === 0
+      guildData.songs.length === 0 ||
+      guildData.connection.state.status === VoiceConnectionStatus.Destroyed
     ) {
       await message.channel.send(messageContent.song.purgeFailed);
       return;
     }
     guildData.songs.length = 0;
-    guildData.connection.dispatcher.end();
+    guildData.connection.destroy();
     guildData.playing = false;
+    this.songList.delete(guildId);
     await message.channel.send(messageContent.song.purge);
   }
 
@@ -169,12 +193,12 @@ export default class Cadency extends Base {
     if (
       guildData == null ||
       guildData.songs[0] == null ||
-      guildData.connection == null
+      guildData.player == null
     ) {
       await message.channel.send(messageContent.song.pauseFailed);
       return;
     }
-    guildData.connection.dispatcher.pause();
+    guildData.player.pause();
     guildData.playing = false;
     await message.channel.send(messageContent.song.pause);
   }
@@ -194,16 +218,19 @@ export default class Cadency extends Base {
     if (
       guildData == null ||
       guildData.songs[0] == null ||
-      guildData.connection == null
+      guildData.player == null
     ) {
       await message.channel.send(messageContent.song.resumeFailed);
       return;
     }
-    if (guildData.playing && !guildData.connection.dispatcher.paused) {
+    if (
+      guildData.playing &&
+      guildData.player.state.status !== AudioPlayerStatus.Paused
+    ) {
       await message.channel.send(messageContent.song.resumeFailedPlaying);
       return;
     }
-    guildData.connection.dispatcher.resume();
+    guildData.player.unpause();
     guildData.playing = true;
     await message.channel.send(messageContent.song.resume);
   }
@@ -235,23 +262,41 @@ export default class Cadency extends Base {
   private async playGuildPlaylist(guildId: string): Promise<void> {
     const songList = this.songList.get(guildId);
     if (songList == null || songList.songs[0] == null) return;
-    songList.connection = await songList.voiceChannel.join();
+
+    // Create audio song
+    const song = createAudioResource(
+      ytdl(songList.songs[0].video_url, { filter: "audioonly" })
+    );
+
+    // Create connection
+    songList.connection = joinVoiceChannel({
+      channelId: songList.voiceChannelId,
+      guildId: guildId,
+      adapterCreator: songList.voiceAdapter,
+    });
+    await entersState(songList.connection, VoiceConnectionStatus.Ready, 10000);
+
+    // Bind player with ressource to connection
+    songList.player = createAudioPlayer();
+    songList.player.play(song);
+    songList.connection.subscribe(songList.player);
     songList.playing = true;
-    const stream = songList.connection.play(ytdl(songList.songs[0].video_url));
-    stream.on("finish", () => {
+
+    // Bind player events
+    songList.player.on(AudioPlayerStatus.Idle, () => {
       songList.songs.shift();
       if (songList.songs.length === 0) {
         this.songList.delete(guildId);
-        songList.voiceChannel.leave();
+        songList.connection?.destroy();
       }
       this.playGuildPlaylist(guildId);
     });
-    stream.on("error", (err: any) => {
+    songList.player.on("error", (err) => {
       logger.error("Error during ytdl play", err);
       songList.songs.shift();
       if (songList.songs.length === 0) {
         this.songList.delete(guildId);
-        songList.voiceChannel.leave();
+        songList.connection?.destroy();
       }
     });
   }

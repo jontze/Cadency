@@ -2,6 +2,7 @@ import { Command, ISong } from "../typings";
 import { getSongInfo } from "../utils/music";
 import { Role } from ".prisma/client";
 import { getGuildId, validateVoiceCommand } from "../utils/discord";
+import messageContent from "../message-content";
 
 /**
  * Command to play a song from a youtube video directly by url or
@@ -19,13 +20,18 @@ const Play: Command = {
   execute: async (message, args): Promise<void> => {
     validateVoiceCommand(Play, args, message);
     const videoInfo = await getSongInfo(args);
-    const song: ISong = {
-      textChannel: message.channel,
-      // Ensured not to be null as it is checked in "validateVoiceCommand"
-      voiceChannel: message.member!.voice.channel!,
-      info: videoInfo,
-    };
-    message.client.emit("addSong", song, getGuildId(message), message);
+    let voiceChannel = message.member?.voice.channel;
+    if (voiceChannel != null && message.guild?.voiceAdapterCreator != null) {
+      const song: ISong = {
+        textChannel: message.channel,
+        voiceChannelId: voiceChannel.id,
+        voiceAdapter: message.guild.voiceAdapterCreator,
+        info: videoInfo,
+      };
+      message.client.emit("addSong", song, getGuildId(message), message);
+    } else {
+      await message.channel.send(messageContent.command.playFailed);
+    }
   },
 };
 

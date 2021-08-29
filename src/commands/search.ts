@@ -28,22 +28,24 @@ const Search: Command = {
     validateVoiceCommand(Search, args, message);
     const videoTop10 = await searchQuery(args);
     // Send Message and handle reactions
-    const embedMessage = await message.channel.send(
-      messageContent.command.searchResults(videoTop10)
-    );
+    const embedMessage = await message.channel.send({
+      embeds: [messageContent.command.searchResults(videoTop10)],
+    });
     // Remove List after 70 seconds
     const deleteTimeout = setTimeout(async () => {
       await embedMessage.delete();
     }, 70000);
     // Wait for a valid reaction
-    const awaitedReactions = await embedMessage.awaitReactions(
-      filterSearchReactions,
-      { max: 1, time: 60000, errors: ["time"] }
-    );
+    const awaitedReactions = await embedMessage.awaitReactions({
+      filter: filterSearchReactions,
+      time: 60000,
+      errors: ["time"],
+      max: 1,
+    });
     const emojiIndex = searchReactions.indexOf(
       awaitedReactions.first()?.emoji.name ?? ""
     );
-    if (emojiIndex >= 0) {
+    if (emojiIndex >= 0 && message.guild?.voiceAdapterCreator != null) {
       // Delete Search-result Message, request song info and play or add to queue
       await embedMessage.delete();
       clearTimeout(deleteTimeout);
@@ -55,7 +57,8 @@ const Search: Command = {
       const song: ISong = {
         textChannel: message.channel,
         // Ensured not to be null as it is checked in "validateVoiceCommand"
-        voiceChannel: message.member!.voice.channel!,
+        voiceChannelId: message.member!.voice.channel!.id,
+        voiceAdapter: message.guild.voiceAdapterCreator,
         info: videoInfo,
       };
       message.client.emit("addSong", song, getGuildId(message), message);
