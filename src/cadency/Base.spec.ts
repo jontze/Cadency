@@ -1,10 +1,11 @@
 const mockMsgHandler = jest.fn();
 import EventEmitter from "events";
-import { Client, Message, TextChannel, User } from "discord.js";
+import { Client, Message, User } from "discord.js";
 import logger from "../logger";
 import { getPrefix } from "../utils/database";
 import Base from "./Base";
 import Config from "./Config";
+import { RawMessageData, RawUserData } from "discord.js/typings/rawDataTypes";
 
 const nextTick = () => new Promise((res) => process.nextTick(res));
 
@@ -22,6 +23,9 @@ const mockOnEvent = jest
 
 jest.mock("discord.js", () => {
   return {
+    Intents: {
+      FLAGS: {},
+    },
     Message: jest.fn().mockImplementation(() => {
       return {
         author: {
@@ -71,8 +75,11 @@ describe("Base Class", () => {
     mockOnEvent.mockClear();
     mockMsgHandler.mockClear();
     mockSetPresence.mockClear();
-    msg = new Message({} as unknown as Client, {}, {} as TextChannel);
-    clientUser = new User({} as unknown as Client, {});
+    msg = new Message({} as unknown as Client, {} as unknown as RawMessageData);
+    clientUser = new User(
+      {} as unknown as Client,
+      {} as unknown as RawUserData
+    );
     mockClientUser = null;
     msg.author.bot = false;
   });
@@ -91,7 +98,7 @@ describe("Base Class", () => {
     base.start();
     expect(base).toBeDefined();
     expect(mockOnEvent.mock.calls[0][0]).toStrictEqual("ready");
-    expect(mockOnEvent.mock.calls[1][0]).toStrictEqual("message");
+    expect(mockOnEvent.mock.calls[1][0]).toStrictEqual("messageCreate");
     expect(mockOnEvent).toBeCalledTimes(2);
     expect(mockClientLogin).toHaveBeenCalledWith("1234");
   });
@@ -108,7 +115,7 @@ describe("Base Class", () => {
   it("should handle incoming message", async () => {
     expect.assertions(4);
     const base = new Base(new Config("1234"));
-    mockEventHandler.emit("message", msg);
+    mockEventHandler.emit("messageCreate", msg);
     await nextTick();
     expect(base).toBeDefined();
     expect(logger.debug).toHaveBeenCalled();
@@ -120,7 +127,7 @@ describe("Base Class", () => {
     expect.assertions(4);
     msg.author.bot = true;
     const base = new Base(new Config("1234"));
-    mockEventHandler.emit("message", msg);
+    mockEventHandler.emit("messageCreate", msg);
     await nextTick();
     expect(base).toBeDefined();
     expect(logger.debug).not.toHaveBeenCalled();
@@ -132,7 +139,7 @@ describe("Base Class", () => {
     expect.assertions(6);
     mockMsgHandler.mockRejectedValue({});
     const base = new Base(new Config("1234"));
-    mockEventHandler.emit("message", msg);
+    mockEventHandler.emit("messageCreate", msg);
     await nextTick();
     expect(base).toBeDefined();
     expect(logger.debug).toHaveBeenCalled();
@@ -163,19 +170,5 @@ describe("Base Class", () => {
     expect(base).toBeDefined();
     expect(mockOnEvent).toHaveBeenCalledTimes(2);
     expect(mockSetPresence).toHaveBeenCalled();
-  });
-
-  it("should emit 'ready' event and fails on set user presence", async () => {
-    expect.assertions(4);
-    mockSetPresence.mockRejectedValueOnce(new Error("Rejected"));
-    mockClientUser = clientUser;
-
-    const base = new Base(new Config("1234"));
-    mockEventHandler.emit("ready");
-    await nextTick();
-    expect(base).toBeDefined();
-    expect(mockOnEvent).toHaveBeenCalledTimes(2);
-    expect(mockSetPresence).toHaveBeenCalled();
-    expect(logger.error).toHaveBeenCalled();
   });
 });

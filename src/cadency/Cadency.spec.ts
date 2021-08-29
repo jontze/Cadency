@@ -1,18 +1,24 @@
+// Discord mocks must be at top level to be loaded at first
+const mockCreateAudioPlayer = jest.fn();
+const mockCreateAudioResource = jest.fn();
+const mockJoinVoiceChannel = jest.fn();
+const mockEntersState = jest.fn();
+const mockGetSongList = jest.fn();
+const mockSetSongList = jest.fn();
+const mockDeleteSongList = jest.fn();
+
 import Config from "./Config";
-import { Client, Message, MessageEmbed, TextChannel, User } from "discord.js";
+import { Client, Message, MessageEmbed } from "discord.js";
 import EventEmitter from "events";
 import Cadency from "./Cadency";
 import * as discordUtils from "../utils/discord";
 import * as databaseUtils from "../utils/database";
 import messageContent from "../message-content";
 import { Server } from ".prisma/client";
+import { RawMessageData } from "discord.js/typings/rawDataTypes";
 
 const nextTick = () => new Promise((res) => process.nextTick(res));
 
-// Discord mocks
-const mockGetSongList = jest.fn();
-const mockSetSongList = jest.fn();
-const mockDeleteSongList = jest.fn();
 const mockEventHandler = new EventEmitter();
 mockEventHandler.setMaxListeners(40);
 const mockMsgSend = jest.fn();
@@ -24,6 +30,14 @@ const mockOnEvent = jest
 
 jest.mock("discord.js", () => {
   return {
+    Intents: {
+      FLAGS: {
+        GUILDS: 1,
+        GUILD_MESSAGES: 2,
+        GUILD_MESSAGE_REACTIONS: 3,
+        GUILD_MEMBERS: 4,
+      },
+    },
     Client: jest.fn().mockImplementation(() => {
       return {
         on: mockOnEvent,
@@ -52,6 +66,23 @@ jest.mock("discord.js", () => {
   };
 });
 
+// Mock discord voice functions
+jest.mock("@discordjs/voice", () => {
+  return {
+    createAudioPlayer: mockCreateAudioPlayer,
+    createAudioResource: mockCreateAudioResource,
+    joinVoiceChannel: mockJoinVoiceChannel,
+    entersState: mockEntersState,
+    AudioPlayerStatus: {
+      Paused: "paused",
+      Idle: "idle",
+    },
+    VoiceConnectionStatus: {
+      destroyed: "destroyed",
+    },
+  };
+});
+
 // Mock logger to prevent logging during tests
 jest.mock("../logger");
 
@@ -74,7 +105,11 @@ describe("Cadency class", () => {
     mockGetSongList.mockClear();
     mockSetSongList.mockClear();
     mockDeleteSongList.mockClear();
-    msg = new Message({} as unknown as Client, {}, {} as TextChannel);
+    mockCreateAudioPlayer.mockClear();
+    mockCreateAudioResource.mockClear();
+    mockJoinVoiceChannel.mockClear();
+    mockEntersState.mockClear();
+    msg = new Message({} as unknown as Client, {} as unknown as RawMessageData);
     msg.author.bot = false;
   });
 
@@ -190,12 +225,17 @@ describe("Cadency class", () => {
   });
 
   it("should emit 'skipSong' and skip the song", async () => {
-    expect.assertions(5);
-    const mockEndDispatcher = jest.fn();
+    expect.assertions(7);
+    const mockConnectionUnsub = jest.fn();
+    const mockDestroyConnection = jest.fn();
     mockGetSongList.mockReturnValueOnce({
       connection: {
-        dispatcher: {
-          end: mockEndDispatcher,
+        destroy: mockDestroyConnection,
+        state: {
+          status: "NotDestroyed",
+          subscription: {
+            unsubscribe: mockConnectionUnsub,
+          },
         },
       },
       songs: ["notNull"],
@@ -206,12 +246,21 @@ describe("Cadency class", () => {
     expect(cadency).toBeDefined();
     expect(mockOnEvent).toHaveBeenCalledTimes(10);
     expect(mockGetSongList).toHaveBeenCalled();
-    expect(mockEndDispatcher).toHaveBeenCalled();
+    expect(mockDestroyConnection).toHaveBeenCalled();
     expect(mockMsgSend).toHaveBeenCalledWith(":fast_forward: **Skipped**");
+    expect(mockConnectionUnsub).toHaveBeenCalledTimes(1);
+    expect(mockDeleteSongList).toHaveBeenCalledTimes(1);
   });
 
   it("should emit 'showPlaylist' and fail to show the list", async () => {
     expect.assertions(4);
+    mockGetSongList.mockReturnValueOnce({
+      connection: {
+        state: {
+          status: "notDestroyed",
+        },
+      },
+    });
     const cadency = new Cadency(new Config("1233"));
     mockEventHandler.emit("showPlaylist", "123", msg);
     await nextTick();
@@ -227,6 +276,9 @@ describe("Cadency class", () => {
     expect.assertions(4);
     mockGetSongList.mockReturnValueOnce({
       connection: {
+        state: {
+          status: "notDestroyed",
+        },
         dispatcher: {},
       },
       songs: ["notNull"],
@@ -258,11 +310,12 @@ describe("Cadency class", () => {
 
   it("should emit 'purgePlaylist' and purge the list", async () => {
     expect.assertions(5);
-    const mockEndDispatcher = jest.fn();
+    const mockDestroyConnection = jest.fn();
     mockGetSongList.mockReturnValueOnce({
       connection: {
-        dispatcher: {
-          end: mockEndDispatcher,
+        destroy: mockDestroyConnection,
+        state: {
+          status: "NotDestroyed",
         },
       },
       songs: ["notNull"],
@@ -274,7 +327,7 @@ describe("Cadency class", () => {
     expect(cadency).toBeDefined();
     expect(mockOnEvent).toHaveBeenCalledTimes(10);
     expect(mockGetSongList).toHaveBeenCalled();
-    expect(mockEndDispatcher).toHaveBeenCalled();
+    expect(mockDestroyConnection).toHaveBeenCalled();
     expect(mockMsgSend).toHaveBeenCalledWith(
       ":white_check_mark: :wastebasket: **Successfully cleared the playlist**"
     );
@@ -295,12 +348,10 @@ describe("Cadency class", () => {
 
   it("should emit 'pauseSong' and pause the song", async () => {
     expect.assertions(5);
-    const mockPauseDispatcher = jest.fn();
+    const mockPause = jest.fn();
     mockGetSongList.mockReturnValueOnce({
-      connection: {
-        dispatcher: {
-          pause: mockPauseDispatcher,
-        },
+      player: {
+        pause: mockPause,
       },
       songs: ["notNull"],
       playing: true,
@@ -311,7 +362,7 @@ describe("Cadency class", () => {
     expect(cadency).toBeDefined();
     expect(mockOnEvent).toHaveBeenCalledTimes(10);
     expect(mockGetSongList).toHaveBeenCalled();
-    expect(mockPauseDispatcher).toHaveBeenCalled();
+    expect(mockPause).toHaveBeenCalled();
     expect(mockMsgSend).toHaveBeenCalledWith(":pause_button: **Paused**");
   });
 
@@ -328,14 +379,14 @@ describe("Cadency class", () => {
     );
   });
 
-  it("should emit 'resumeSong' and fail because song allready plaing", async () => {
+  it("should emit 'resumeSong' and fail because song allready playing", async () => {
     expect.assertions(5);
-    const mockResumeDispatcher = jest.fn();
+    const mockUnpause = jest.fn();
     mockGetSongList.mockReturnValueOnce({
-      connection: {
-        dispatcher: {
-          resume: mockResumeDispatcher,
-          paused: false,
+      player: {
+        unpause: mockUnpause,
+        state: {
+          status: "NotPaused",
         },
       },
       songs: ["notNull"],
@@ -347,7 +398,7 @@ describe("Cadency class", () => {
     expect(cadency).toBeDefined();
     expect(mockOnEvent).toHaveBeenCalledTimes(10);
     expect(mockGetSongList).toHaveBeenCalled();
-    expect(mockResumeDispatcher).not.toHaveBeenCalled();
+    expect(mockUnpause).not.toHaveBeenCalled();
     expect(mockMsgSend).toHaveBeenCalledWith(
       ":x: **The music is already playing...**"
     );
@@ -355,11 +406,12 @@ describe("Cadency class", () => {
 
   it("should emit 'resumeSong' and resume the song", async () => {
     expect.assertions(5);
-    const mockResumeDispatcher = jest.fn();
+    const mockUnpause = jest.fn();
     mockGetSongList.mockReturnValueOnce({
-      connection: {
-        dispatcher: {
-          resume: mockResumeDispatcher,
+      player: {
+        unpause: mockUnpause,
+        state: {
+          status: "paused",
         },
       },
       songs: ["notNull"],
@@ -371,7 +423,7 @@ describe("Cadency class", () => {
     expect(cadency).toBeDefined();
     expect(mockOnEvent).toHaveBeenCalledTimes(10);
     expect(mockGetSongList).toHaveBeenCalled();
-    expect(mockResumeDispatcher).toHaveBeenCalled();
+    expect(mockUnpause).toHaveBeenCalled();
     expect(mockMsgSend).toHaveBeenCalledWith(":play_pause: **Resumed**");
   });
 
@@ -414,31 +466,12 @@ describe("Cadency class", () => {
   });
 
   it("should emit 'addSong', create playlist, add the song and start playing", async () => {
-    expect.assertions(8);
-    const mockOnPlayEvent = jest
-      .fn()
-      .mockImplementation(
-        (onEvent: string, listener: (...args: any[]) => void) => {
-          mockEventHandler.on(onEvent, listener);
-        }
-      );
-    const mockPlay = jest.fn().mockImplementation(() => {
-      return {
-        on: mockOnPlayEvent,
-      };
-    });
-    const mockChannelJoin = jest.fn();
-    mockChannelJoin.mockResolvedValueOnce({
-      play: mockPlay,
-    });
+    expect.assertions(12);
     const spyMsgContent = jest
       .spyOn(messageContent.song, "add")
       .mockReturnValueOnce("");
     mockGetSongList.mockReturnValueOnce(null);
     mockGetSongList.mockReturnValue({
-      voiceChannel: {
-        join: mockChannelJoin,
-      },
       connection: null,
       playing: false,
       songs: [
@@ -447,6 +480,26 @@ describe("Cadency class", () => {
         },
       ],
     });
+    const mockConnectionSubscribe = jest.fn();
+    const mockConnectionDestroy = jest.fn();
+    const mockPlayPlayer = jest.fn();
+    const mockOnPlayer = jest
+      .fn()
+      .mockImplementation(
+        (onEvent: string, listener: (...args: any[]) => void) => {
+          mockEventHandler.on(onEvent, listener);
+        }
+      );
+    mockCreateAudioResource.mockReturnValueOnce("testSong");
+    mockJoinVoiceChannel.mockReturnValueOnce({
+      subscribe: mockConnectionSubscribe,
+      destroy: mockConnectionDestroy,
+    });
+    mockCreateAudioPlayer.mockReturnValueOnce({
+      play: mockPlayPlayer,
+      on: mockOnPlayer,
+    });
+
     const cadency = new Cadency(new Config("1233"));
     mockEventHandler.emit(
       "addSong",
@@ -460,8 +513,12 @@ describe("Cadency class", () => {
     expect(mockGetSongList).toHaveBeenCalled();
     expect(mockSetSongList).toHaveBeenCalled();
     expect(spyMsgContent).toHaveBeenCalled();
-    expect(mockChannelJoin).toHaveBeenCalled();
-    expect(mockPlay).toHaveBeenCalled();
-    expect(mockOnPlayEvent).toHaveBeenCalledTimes(2);
+    expect(mockCreateAudioResource).toHaveBeenCalledTimes(1);
+    expect(mockJoinVoiceChannel).toHaveBeenCalledTimes(1);
+    expect(mockCreateAudioPlayer).toHaveBeenCalledTimes(1);
+    expect(mockConnectionSubscribe).toHaveBeenCalledTimes(1);
+    expect(mockPlayPlayer).toHaveBeenCalledTimes(1);
+    expect(mockOnPlayer).toHaveBeenCalledTimes(2);
+    expect(mockEntersState).toHaveBeenCalledTimes(1);
   });
 });

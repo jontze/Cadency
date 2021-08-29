@@ -1,6 +1,7 @@
 import Pause from "./pause";
-import { Client, Message, TextChannel } from "discord.js";
+import { Client, Message } from "discord.js";
 import { getGuildId, validateVoiceCommand } from "../utils/discord";
+import { RawMessageData } from "discord.js/typings/rawDataTypes";
 
 const mockEmit = jest.fn();
 
@@ -23,11 +24,7 @@ describe("Pause command", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockEmit.mockClear();
-    msg = new Message(
-      {} as unknown as Client,
-      {},
-      "" as unknown as TextChannel
-    );
+    msg = new Message({} as unknown as Client, {} as unknown as RawMessageData);
   });
 
   it("should execute command", async () => {

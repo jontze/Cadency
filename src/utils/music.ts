@@ -56,7 +56,10 @@ export const filterSearchReactions = (
   reaction: MessageReaction,
   user: User
 ): boolean => {
-  return searchReactions.includes(reaction.emoji.name);
+  if (reaction.emoji.name != null) {
+    return searchReactions.includes(reaction.emoji.name);
+  }
+  return false;
 };
 
 /**

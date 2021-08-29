@@ -19,7 +19,7 @@ const Help: Command = {
     await message.channel.send(
       messageContent.command.helpDM(message.author.toString())
     );
-    await message.author.send(messageContent.command.help());
+    await message.author.send({ embeds: [messageContent.command.help()] });
   },
 };
 

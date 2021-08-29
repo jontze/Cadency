@@ -1,4 +1,5 @@
-import { Client, Message, TextChannel } from "discord.js";
+import { Client, Message } from "discord.js";
+import { RawMessageData } from "discord.js/typings/rawDataTypes";
 import { getGuildId } from "../utils/discord";
 import Prefix from "./prefix";
 
@@ -23,11 +24,7 @@ describe("Prefix command", () => {
   let msg: Message;
 
   beforeEach(() => {
-    msg = new Message(
-      {} as unknown as Client,
-      {},
-      "" as unknown as TextChannel
-    );
+    msg = new Message({} as unknown as Client, {} as unknown as RawMessageData);
   });
 
   it("should execute command", async () => {

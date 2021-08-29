@@ -1,6 +1,7 @@
-import { Client, Message, TextChannel } from "discord.js";
+import { Client, Message } from "discord.js";
 import Play from "./play";
 import { getGuildId, validateVoiceCommand } from "../utils/discord";
+import { RawMessageData } from "discord.js/typings/rawDataTypes";
 
 // Discord mocks
 const mockEmit = jest.fn();
@@ -14,6 +15,9 @@ jest.mock("discord.js", () => {
   return {
     Message: jest.fn().mockImplementation(() => {
       return {
+        guild: {
+          voiceAdapterCreator: jest.fn(),
+        },
         client: {
           emit: mockEmit,
         },
@@ -55,11 +59,7 @@ describe("Play command", () => {
 
     mockEmit.mockClear();
     mockMsgSend.mockClear();
-    msg = new Message(
-      {} as unknown as Client,
-      {},
-      "" as unknown as TextChannel
-    );
+    msg = new Message({} as unknown as Client, {} as unknown as RawMessageData);
   });
 
   it("should execute command and emit 'addSong' event", async () => {

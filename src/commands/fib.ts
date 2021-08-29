@@ -25,7 +25,7 @@ const Fib: Command = {
     if (args[0] == null) throw new CommandArgsError("Args undefined");
     const inputNumber = parseFloat(args[0]);
     if (!isNaN(inputNumber)) {
-      await message.channel.send(fib(inputNumber));
+      await message.channel.send(fib(inputNumber).toString());
     } else {
       await message.channel.send(messageContent.command.fibFail(args[0]));
     }
