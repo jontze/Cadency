@@ -6,6 +6,7 @@
   "bugs": "https://github.com/jontze/Cadency/issues",
   "main": "dist/main.js",
   "scripts": {
+    "postinstall": "yarn db:generate",
     "prebuild": "yarn db:generate",
     "build": "tsc",
     "lint": "prettier . --check",
