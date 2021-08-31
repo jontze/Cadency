@@ -152,7 +152,7 @@ describe("Music utils", () => {
     mockYtsrResponse = Promise.resolve(dummyResponse);
     try {
       await getSongInfo(dummyArgs);
-    } catch (e) {
+    } catch (e: any) {
       expect(e instanceof MusicResultError).toBe(true);
       expect(e.message).toBe(messageContent.error.music.ytsrNoResults);
       expect(ytsr).toHaveBeenCalledWith(dummyArgs.join(" "), { limit: 50 });

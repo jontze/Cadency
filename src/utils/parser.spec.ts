@@ -35,7 +35,7 @@ describe("Parser", () => {
     const msg = "";
     try {
       parseCommand(msg);
-    } catch (e) {
+    } catch (e: any) {
       expect(e.message).toBe("Command name undefined");
     }
   });
@@ -65,7 +65,7 @@ describe("Parser", () => {
     const commandName = "DOESNOTEXIST";
     try {
       getCommandByName(commandName);
-    } catch (e) {
+    } catch (e: any) {
       expect(e.message).toBe(messageContent.error.command.notFound);
     }
   });
