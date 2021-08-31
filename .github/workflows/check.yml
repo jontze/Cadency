@@ -5,6 +5,7 @@ on:
       - master
   pull_request:
     branches: [develop, master]
+    types: [synchronize]
 jobs:
   lint:
     runs-on: ubuntu-latest
