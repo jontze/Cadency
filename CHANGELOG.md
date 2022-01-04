@@ -1,3 +1,11 @@
+## [2.0.2](https://github.com/UsingPython/DiscordBot/compare/v2.0.1...v2.0.2) (2022-01-04)
+
+
+### Bug Fixes
+
+* **cadency:** Adjust ytdl stream video quality to highestaudio ([5b4c588](https://github.com/UsingPython/DiscordBot/commit/5b4c5881ac8834e0734155c69f0d2d5c1f890c2d))
+* **docker-compose:** Correct username in ghcr image ([daa2741](https://github.com/UsingPython/DiscordBot/commit/daa274111f464ca7b1ca05b431526793b1028edf))
+
 ## [2.0.1](https://github.com/UsingPython/DiscordBot/compare/v2.0.0...v2.0.1) (2021-06-26)
 
 
