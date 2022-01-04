@@ -1,3 +1,10 @@
+## [2.0.3](https://github.com/jontze/Cadency/compare/v2.0.2...v2.0.3) (2022-01-04)
+
+
+### Bug Fixes
+
+* **publishImage:** Adjust release workflow docker image path ([1217916](https://github.com/jontze/Cadency/commit/121791610e16e60dee71896e7e72f44e49818a5b))
+
 ## [2.0.2](https://github.com/UsingPython/DiscordBot/compare/v2.0.1...v2.0.2) (2022-01-04)
 
 
