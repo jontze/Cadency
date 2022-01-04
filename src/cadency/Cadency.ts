@@ -237,7 +237,9 @@ export default class Cadency extends Base {
     if (songList == null || songList.songs[0] == null) return;
     songList.connection = await songList.voiceChannel.join();
     songList.playing = true;
-    const stream = songList.connection.play(ytdl(songList.songs[0].video_url));
+    const stream = songList.connection.play(
+      ytdl(songList.songs[0].video_url, { quality: "highestaudio" })
+    );
     stream.on("finish", () => {
       songList.songs.shift();
       if (songList.songs.length === 0) {
