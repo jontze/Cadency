@@ -1,4 +1,4 @@
-FROM node:14.15-alpine as build
+FROM node:16.6-alpine as build
 WORKDIR /usr/discordbot
 COPY package.json ./
 COPY yarn.lock ./
@@ -8,7 +8,7 @@ COPY ./src ./src
 COPY ./prisma ./prisma
 RUN yarn build
 
-FROM node:14.15 as production
+FROM node:16.6 as production
 WORKDIR /usr/discordbot
 RUN apt-get update || : && apt-get install python -y
 RUN apt-get install ffmpeg -y
