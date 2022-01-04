@@ -1,6 +1,6 @@
 {
   "branches": "master",
-  "repositoryUrl": "https://github.com/UsingPython/DiscordBot",
+  "repositoryUrl": "https://github.com/jontze/Cadency",
   "debug": "true",
   "plugins": [
     "@semantic-release/commit-analyzer",
