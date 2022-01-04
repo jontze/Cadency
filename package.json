@@ -2,8 +2,8 @@
   "name": "discord-bot",
   "version": "0.0.0-development",
   "description": "A simple Discord-Music-Bot, written with discord.js and TypeScript",
-  "homepage": "https://github.com/UsingPython/DiscordBot",
-  "bugs": "https://github.com/UsingPython/DiscordBot/issues",
+  "homepage": "https://github.com/jontze/Cadency",
+  "bugs": "https://github.com/jontze/Cadency/issues",
   "main": "dist/main.js",
   "scripts": {
     "prebuild": "yarn db:generate",
@@ -22,10 +22,10 @@
     "db:migrate:dev": "prisma migrate dev",
     "db:migrate:prod": "prisma migrate deploy"
   },
-  "author": "UsingPython",
+  "author": "jontze",
   "repository": {
     "type": "git",
-    "url": "https://github.com/UsingPython/DiscordBot"
+    "url": "https://github.com/jontze/Cadency"
   },
   "license": "MIT",
   "dependencies": {
