@@ -156,9 +156,12 @@ describe("Music utils", () => {
     try {
       await getSongInfo(dummyArgs);
     } catch (e) {
-      expect(e instanceof MusicResultError).toBe(true);
-      expect(e.message).toBe(messageContent.error.music.ytsrNoResults);
-      expect(ytsr).toHaveBeenCalledWith(dummyArgs.join(" "), { limit: 50 });
+      const isMusicResultError = e instanceof MusicResultError;
+      expect(isMusicResultError).toBe(true);
+      if (isMusicResultError) {
+        expect(e.message).toBe(messageContent.error.music.ytsrNoResults);
+        expect(ytsr).toHaveBeenCalledWith(dummyArgs.join(" "), { limit: 50 });
+      }
     }
   });
 });
