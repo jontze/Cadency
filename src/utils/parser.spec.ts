@@ -1,3 +1,5 @@
+import { CommandError } from "../errors/command";
+import { ParsingError } from "../errors/parser";
 import messageContent from "../message-content";
 import {
   getCommandByName,
@@ -36,7 +38,11 @@ describe("Parser", () => {
     try {
       parseCommand(msg);
     } catch (e) {
-      expect(e.message).toBe("Command name undefined");
+      const isParsingError = e instanceof ParsingError;
+      expect(isParsingError).toBe(true);
+      if (isParsingError) {
+        expect(e.message).toBe("Command name undefined");
+      }
     }
   });
 
@@ -66,7 +72,11 @@ describe("Parser", () => {
     try {
       getCommandByName(commandName);
     } catch (e) {
-      expect(e.message).toBe(messageContent.error.command.notFound);
+      const isCommandError = e instanceof CommandError;
+      expect(isCommandError).toBe(true);
+      if (isCommandError) {
+        expect(e.message).toBe(messageContent.error.command.notFound);
+      }
     }
   });
 });
