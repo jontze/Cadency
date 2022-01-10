@@ -36,7 +36,7 @@
     "dotenv": "^10.0.0",
     "ffmpeg": "^0.0.4",
     "fluent-ffmpeg": "^2.1.2",
-    "query-string": "^7.0.0",
+    "query-string": "^7.1.0",
     "winston": "^3.3.3",
     "ytdl-core": "^4.9.2",
     "ytsr": "^3.5.3"
