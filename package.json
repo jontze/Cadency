@@ -39,7 +39,7 @@
     "query-string": "^7.1.0",
     "winston": "^3.4.0",
     "ytdl-core": "^4.9.2",
-    "ytsr": "^3.5.3"
+    "ytsr": "^3.6.0"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.1",
