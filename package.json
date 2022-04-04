@@ -55,7 +55,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-promise": "^6.0.0",
     "jest": "^27.5.1",
-    "prettier": "^2.6.1",
+    "prettier": "^2.6.2",
     "prisma": "^3.11.1",
     "semantic-release": "^19.0.2",
     "ts-jest": "^27.1.4",
