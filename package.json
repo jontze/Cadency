@@ -45,7 +45,7 @@
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/git": "^10.0.1",
     "@types/jest": "^27.5.0",
-    "@types/node": "^18.7.21",
+    "@types/node": "^18.8.0",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "axios-mock-adapter": "^1.21.2",
     "eslint": "^8.24.0",
