@@ -42,7 +42,7 @@
     "ytsr": "^3.8.0"
   },
   "devDependencies": {
-    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/changelog": "^6.0.2",
     "@semantic-release/git": "^10.0.1",
     "@types/jest": "^27.5.0",
     "@types/node": "^18.11.13",
