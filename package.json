@@ -30,7 +30,7 @@
   "license": "MIT",
   "dependencies": {
     "@discordjs/opus": "^0.9.0",
-    "@prisma/client": "^4.8.0",
+    "@prisma/client": "^4.9.0",
     "axios": "^0.27.2",
     "discord.js": "^12.5.3",
     "dotenv": "^16.0.3",
